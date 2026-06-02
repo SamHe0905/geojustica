@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../models/institution.dart';
 import '../../../services/location_service.dart';
+import '../../../services/schedule_service.dart';
 
 class InstitutionCard extends StatefulWidget {
   final Institution institution;
@@ -148,33 +149,39 @@ class _InstitutionCardState extends State<InstitutionCard> {
                     const SizedBox(height: 4),
                     _infoRow(Icons.access_time_rounded, inst.schedule!),
                   ],
-                  if (inst.acceptsIndigent) ...[
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.success.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.verified_rounded,
-                              color: AppColors.success, size: 14),
-                          SizedBox(width: 4),
-                          Text(
-                            'Atendimento gratuito',
-                            style: TextStyle(
-                              color: AppColors.success,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12,
-                            ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      _statusBadge(inst.schedule),
+                      if (inst.acceptsIndigent)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.success.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.verified_rounded,
+                                  color: AppColors.success, size: 14),
+                              SizedBox(width: 4),
+                              Text(
+                                'Gratuito',
+                                style: TextStyle(
+                                  color: AppColors.success,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: 14),
                   const Divider(height: 1),
                   const SizedBox(height: 10),
@@ -212,6 +219,37 @@ class _InstitutionCardState extends State<InstitutionCard> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _statusBadge(String? schedule) {
+    final isOpen = ScheduleService().isOpenNow(schedule);
+    final color = isOpen ? AppColors.success : AppColors.error;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            isOpen ? 'Aberto agora' : 'Fechado',
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w800,
+              fontSize: 12,
+            ),
+          ),
+        ],
       ),
     );
   }
