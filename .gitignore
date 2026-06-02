@@ -1,0 +1,48 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Build artifacts
+*.apk
+*.aab
+*.ipa
+
+# Generated
+**/*.g.dart
+**/*.freezed.dart
+coverage/
+
+# Secrets / Environment
+.env
+.env.local
+*.secret
+keystore.properties
+key.properties
+
+# Misc
+sheet1.xml
+sharedStrings.xml
