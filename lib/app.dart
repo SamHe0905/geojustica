@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'core/constants/app_routes.dart';
 import 'core/theme/app_theme.dart';
-import 'providers/auth_provider.dart';
 import 'providers/settings_provider.dart';
 import 'features/home/screens/home_screen.dart';
 import 'features/flow/screens/flow_screen.dart';
@@ -11,8 +10,7 @@ import 'features/results/screens/results_screen.dart';
 import 'features/institution/screens/institution_detail_screen.dart';
 import 'features/map/screens/map_screen.dart';
 import 'features/search/screens/search_screen.dart';
-import 'features/admin/screens/admin_screen.dart';
-import 'features/admin/screens/admin_login_screen.dart';
+import 'features/admin/screens/admin_guard.dart';
 import 'features/report/screens/report_screen.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
 import 'features/history/screens/history_screen.dart';
@@ -26,22 +24,10 @@ class GeoJusticaApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
-    final authed = ref.watch(adminAuthProvider);
 
     final router = GoRouter(
       initialLocation:
           settings.onboardingSeen ? AppRoutes.home : AppRoutes.onboarding,
-      redirect: (context, state) {
-        // Proteção da rota /admin: se não autenticado, manda para login
-        if (state.matchedLocation == AppRoutes.admin && !authed) {
-          return AppRoutes.adminLogin;
-        }
-        // Se já autenticado e tenta acessar login, redireciona pro admin
-        if (state.matchedLocation == AppRoutes.adminLogin && authed) {
-          return AppRoutes.admin;
-        }
-        return null;
-      },
       routes: [
         GoRoute(path: AppRoutes.onboarding, builder: (_, __) => const OnboardingScreen()),
         GoRoute(path: AppRoutes.home, builder: (_, __) => const HomeScreen()),
@@ -58,8 +44,8 @@ class GeoJusticaApp extends ConsumerWidget {
           path: AppRoutes.mapAll,
           builder: (_, __) => const MapScreen(showAll: true),
         ),
-        GoRoute(path: AppRoutes.admin, builder: (_, __) => const AdminScreen()),
-        GoRoute(path: AppRoutes.adminLogin, builder: (_, __) => const AdminLoginScreen()),
+        GoRoute(path: AppRoutes.admin, builder: (_, __) => const AdminGuard()),
+        GoRoute(path: AppRoutes.adminLogin, builder: (_, __) => const AdminGuard()),
         GoRoute(
           path: AppRoutes.report,
           builder: (_, state) =>

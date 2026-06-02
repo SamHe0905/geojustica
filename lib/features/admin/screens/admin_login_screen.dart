@@ -33,11 +33,10 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
     final ok = await ref.read(adminAuthProvider.notifier).login(_ctrl.text.trim());
     if (!mounted) return;
     setState(() => _loading = false);
-    if (ok) {
-      context.go(AppRoutes.admin);
-    } else {
+    if (!ok) {
       setState(() => _error = 'Senha incorreta');
     }
+    // Se ok=true, o AdminGuard automaticamente troca para AdminScreen
   }
 
   @override
