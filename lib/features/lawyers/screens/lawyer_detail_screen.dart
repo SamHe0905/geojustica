@@ -48,9 +48,7 @@ class LawyerDetailScreen extends ConsumerWidget {
                         radius: 36,
                         backgroundColor: Colors.white,
                         child: Text(
-                          lawyer.name.substring(
-                              lawyer.name.indexOf('.') + 2,
-                              lawyer.name.indexOf('.') + 4).toUpperCase(),
+                          lawyer.initials,
                           style: const TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w900,

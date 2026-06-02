@@ -75,4 +75,13 @@ class Lawyer {
   bool get hasFreeOption => isFree ||
       modalities.contains(LawyerModality.primeiraGratis) ||
       modalities.contains(LawyerModality.exito);
+
+  /// Iniciais (primeiras letras) do nome — seguro contra qualquer formato
+  String get initials {
+    final clean = name.replaceAll(RegExp(r'^(Dr\.?|Dra\.?|Sr\.?|Sra\.?)\s+'), '').trim();
+    final parts = clean.split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) return parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
 }

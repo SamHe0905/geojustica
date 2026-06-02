@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'core/constants/app_colors.dart';
 import 'core/constants/app_routes.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/settings_provider.dart';
@@ -70,7 +69,6 @@ class GeoJusticaApp extends ConsumerWidget {
             colorScheme: baseTheme.colorScheme.copyWith(
               surface: const Color(0xFF111111),
               onSurface: Colors.yellowAccent,
-              onBackground: Colors.yellowAccent,
               primary: Colors.yellowAccent,
               onPrimary: Colors.black,
             ),

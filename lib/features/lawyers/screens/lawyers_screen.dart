@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../models/institution.dart';
 import '../../../models/lawyer.dart';
@@ -183,7 +182,7 @@ class _LawyerCard extends StatelessWidget {
                     radius: 28,
                     backgroundColor: AppColors.primary.withOpacity(0.15),
                     child: Text(
-                      lawyer.name.substring(lawyer.name.indexOf('.') + 2, lawyer.name.indexOf('.') + 4).toUpperCase(),
+                      lawyer.initials,
                       style: const TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w900,

@@ -53,17 +53,17 @@ class HistoryScreen extends ConsumerWidget {
             return _buildEmpty(context);
           }
           final visited = history.visitedIds
-              .map((id) => all.firstWhere(
-                    (i) => i.id == id,
-                    orElse: () => all.first,
-                  ))
-              .toSet()
+              .map((id) {
+                final found = all.where((i) => i.id == id).toList();
+                return found.isEmpty ? null : found.first;
+              })
+              .where((i) => i != null)
               .toList();
           return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: visited.length,
             itemBuilder: (_, i) {
-              final inst = visited[i];
+              final inst = visited[i]!;
               final rating = history.ratings[inst.id];
               return Card(
                 child: ListTile(

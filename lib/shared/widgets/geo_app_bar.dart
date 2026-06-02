@@ -64,9 +64,6 @@ class GeoAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
-      ),
     );
   }
 

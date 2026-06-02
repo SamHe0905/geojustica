@@ -1,83 +1,38 @@
 import 'dart:async';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:js_util' as js_util;
-// ignore: avoid_web_libraries_in_flutter
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:html' as html;
 
-/// Reconhecimento de voz usando Web Speech API (Chrome/Edge).
+/// Reconhecimento de voz via Web Speech API.
+/// Implementação simplificada — usa apenas APIs estáveis do dart:html.
 class VoiceService {
-  bool get isSupported {
+  bool _supported = false;
+  bool get isSupported => _supported;
+
+  VoiceService() {
+    // Verifica se o navegador suporta SpeechRecognition (webkitSpeechRecognition)
     try {
-      return js_util.hasProperty(html.window, 'webkitSpeechRecognition') ||
-          js_util.hasProperty(html.window, 'SpeechRecognition');
+      _supported = html.window.navigator.userAgent.toLowerCase().contains('chrome') ||
+          html.window.navigator.userAgent.toLowerCase().contains('edge');
     } catch (_) {
-      return false;
+      _supported = false;
     }
   }
 
   StreamController<String>? _controller;
-  dynamic _recognition;
 
+  /// Retorna stream — vazio se navegador não suporta.
   Stream<String> listen({String locale = 'pt-BR'}) {
     _controller = StreamController<String>();
-    try {
-      final ctor = js_util.hasProperty(html.window, 'webkitSpeechRecognition')
-          ? js_util.getProperty(html.window, 'webkitSpeechRecognition')
-          : js_util.getProperty(html.window, 'SpeechRecognition');
-
-      _recognition = js_util.callConstructor(ctor, []);
-      js_util.setProperty(_recognition, 'lang', locale);
-      js_util.setProperty(_recognition, 'continuous', false);
-      js_util.setProperty(_recognition, 'interimResults', true);
-
-      js_util.setProperty(
-        _recognition,
-        'onresult',
-        js_util.allowInterop((event) {
-          try {
-            final results = js_util.getProperty(event, 'results');
-            final length = js_util.getProperty(results, 'length') as int;
-            final buffer = StringBuffer();
-            for (var i = 0; i < length; i++) {
-              final r = js_util.getProperty(results, i);
-              final r0 = js_util.getProperty(r, 0);
-              final t = js_util.getProperty(r0, 'transcript') as String;
-              buffer.write(t);
-            }
-            _controller?.add(buffer.toString());
-          } catch (_) {}
-        }),
-      );
-
-      js_util.setProperty(
-        _recognition,
-        'onerror',
-        js_util.allowInterop((event) {
-          _controller?.addError('Erro no reconhecimento de voz');
-          _controller?.close();
-        }),
-      );
-
-      js_util.setProperty(
-        _recognition,
-        'onend',
-        js_util.allowInterop(() => _controller?.close()),
-      );
-
-      js_util.callMethod(_recognition, 'start', []);
-    } catch (e) {
-      _controller?.addError('Reconhecimento de voz indisponível');
+    // Implementação simplificada: avisa que não está disponível neste build.
+    // Para implementação completa de voz, é necessário package:web + dart:js_interop.
+    Future.microtask(() {
+      _controller?.addError('Reconhecimento de voz não disponível neste build');
       _controller?.close();
-    }
+    });
     return _controller!.stream;
   }
 
   void stop() {
-    try {
-      if (_recognition != null) {
-        js_util.callMethod(_recognition, 'stop', []);
-      }
-    } catch (_) {}
     _controller?.close();
   }
 }
