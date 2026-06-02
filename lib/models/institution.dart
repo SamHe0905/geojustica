@@ -9,6 +9,8 @@ enum InstitutionCategory {
   documentos,
   direitosMulher,
   aposentadoria,
+  saude,
+  denuncias,
   outros;
 
   String get label {
@@ -21,12 +23,34 @@ enum InstitutionCategory {
       case documentos: return 'Documentos';
       case direitosMulher: return 'Direitos da mulher';
       case aposentadoria: return 'Aposentadoria';
+      case saude: return 'Saúde';
+      case denuncias: return 'Denúncias';
       case outros: return 'Outros';
     }
   }
 
+  /// Se a categoria envolve litígio (precisa saber se pode pagar advogado).
+  bool get requiresPaymentQuestion {
+    switch (this) {
+      case familia:
+      case trabalho:
+      case consumidor:
+      case moradia:
+      case aposentadoria:
+        return true;
+      // Emergência, anônimo, administrativo, saúde pública não precisa
+      case violenciaDomestica:
+      case direitosMulher:
+      case documentos:
+      case saude:
+      case denuncias:
+      case outros:
+        return false;
+    }
+  }
+
   static InstitutionCategory fromString(String value) {
-    final normalized = value.toLowerCase().replaceAll(' ', '_');
+    final normalized = value.toLowerCase().replaceAll(' ', '_').replaceAll('ç', 'c').replaceAll('ã', 'a');
     return InstitutionCategory.values.firstWhere(
       (e) => e.name == normalized || e.label.toLowerCase() == value.toLowerCase(),
       orElse: () => outros,

@@ -28,6 +28,8 @@ class _InstitutionCardState extends State<InstitutionCard> {
       case InstitutionCategory.documentos: return AppColors.categoryDocumentos;
       case InstitutionCategory.direitosMulher: return AppColors.categoryMulher;
       case InstitutionCategory.aposentadoria: return AppColors.categoryAposentadoria;
+      case InstitutionCategory.saude: return AppColors.categorySaude;
+      case InstitutionCategory.denuncias: return AppColors.categoryDenuncias;
       case InstitutionCategory.outros: return AppColors.categoryOutros;
     }
   }

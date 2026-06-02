@@ -25,6 +25,8 @@ class _CategoryButtonState extends State<CategoryButton> {
       case InstitutionCategory.documentos: return Icons.badge_rounded;
       case InstitutionCategory.direitosMulher: return Icons.female_rounded;
       case InstitutionCategory.aposentadoria: return Icons.elderly_rounded;
+      case InstitutionCategory.saude: return Icons.local_hospital_rounded;
+      case InstitutionCategory.denuncias: return Icons.campaign_rounded;
       case InstitutionCategory.outros: return Icons.help_rounded;
     }
   }
@@ -39,6 +41,8 @@ class _CategoryButtonState extends State<CategoryButton> {
       case InstitutionCategory.documentos: return AppColors.categoryDocumentos;
       case InstitutionCategory.direitosMulher: return AppColors.categoryMulher;
       case InstitutionCategory.aposentadoria: return AppColors.categoryAposentadoria;
+      case InstitutionCategory.saude: return AppColors.categorySaude;
+      case InstitutionCategory.denuncias: return AppColors.categoryDenuncias;
       case InstitutionCategory.outros: return AppColors.categoryOutros;
     }
   }

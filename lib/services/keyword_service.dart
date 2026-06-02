@@ -42,6 +42,18 @@ class KeywordService {
       'deficiencia', 'idoso', 'auxilio', 'previdencia', 'contribuicao',
       'velho', 'velha',
     ],
+    InstitutionCategory.saude: [
+      'saude', 'remedio', 'remedios', 'medicamento', 'sus', 'hospital',
+      'tratamento', 'internacao', 'cirurgia', 'leito', 'consulta',
+      'medico', 'medica', 'doente', 'doenca', 'cancer', 'transplante',
+      'farmacia', 'alto custo',
+    ],
+    InstitutionCategory.denuncias: [
+      'denuncia', 'denunciar', 'ouvidoria', 'reclamar', 'reclamacao',
+      'corrupcao', 'irregularidade', 'fraude', 'abuso', 'maus tratos',
+      'ministerio publico', 'mpf', 'mpe', 'oab', 'sigiloso', 'anonima',
+      'anonimo', 'servico publico', 'prefeitura', 'governo',
+    ],
   };
 
   /// Normaliza removendo acentos e pontuação

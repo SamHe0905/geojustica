@@ -33,6 +33,8 @@ class AppColors {
   static const Color categoryDocumentos = Color(0xFF00897B);
   static const Color categoryMulher = Color(0xFFEC407A);
   static const Color categoryAposentadoria = Color(0xFF546E7A);
+  static const Color categorySaude = Color(0xFFE53935);
+  static const Color categoryDenuncias = Color(0xFF5E35B1);
   static const Color categoryOutros = Color(0xFF6D4C41);
 
   // Gradientes prontos

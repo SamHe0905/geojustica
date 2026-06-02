@@ -11,7 +11,7 @@ class LocalInstitutionRepository {
       neighborhood: 'Parque dos Poderes',
       phone: '(67) 3318-2500 / 129',
       whatsapp: '67992473968',
-      category: InstitutionCategory.outros,
+      category: InstitutionCategory.familia,
       services: [
         'Assistência jurídica integral e gratuita',
         'Direito cível, criminal, família, infância e juventude',
@@ -50,7 +50,7 @@ class LocalInstitutionRepository {
       address: 'Rua Barão de Melgaço, 128',
       neighborhood: 'Centro',
       phone: '(67) 3317-8757',
-      category: InstitutionCategory.outros,
+      category: InstitutionCategory.saude,
       services: [
         'Medicamentos e tratamentos pelo SUS',
         'Internações, leitos e cirurgias',
@@ -130,7 +130,7 @@ class LocalInstitutionRepository {
       address: 'Av. Tamandaré, 6000 - Campus UCDB',
       neighborhood: 'Jardim Seminário',
       phone: '(67) 3312-3643',
-      category: InstitutionCategory.outros,
+      category: InstitutionCategory.familia,
       services: [
         'Atendimento jurídico gratuito',
         'Direito de família, consumidor e previdenciário',
@@ -169,7 +169,7 @@ class LocalInstitutionRepository {
       address: 'Av. Afonso Pena, 275',
       neighborhood: 'Amambaí',
       phone: '(67) 3378-9000',
-      category: InstitutionCategory.outros,
+      category: InstitutionCategory.trabalho,
       services: [
         'Assistência judiciária à população carente',
         'Convênios com Tribunais, MP e OAB',
@@ -206,7 +206,7 @@ class LocalInstitutionRepository {
       address: 'Av. Mato Grosso, 4700',
       neighborhood: 'Carandá Bosque',
       phone: '(67) 3318-4744',
-      category: InstitutionCategory.outros,
+      category: InstitutionCategory.denuncias,
       services: [
         'Ouvidoria ao cidadão',
         'Comissão OAB Mulher (violência doméstica)',
@@ -267,7 +267,7 @@ class LocalInstitutionRepository {
       neighborhood: 'Jardim Veraneio',
       phone: '(67) 3318-2000',
       whatsapp: '67998250096',
-      category: InstitutionCategory.outros,
+      category: InstitutionCategory.denuncias,
       services: [
         'Defesa de direitos coletivos e difusos',
         'Infância, idoso, consumidor, saúde e educação',
@@ -306,7 +306,7 @@ class LocalInstitutionRepository {
       address: 'Av. Afonso Pena, 4444',
       neighborhood: 'Centro / Cabreúva',
       phone: '(67) 3312-7200',
-      category: InstitutionCategory.outros,
+      category: InstitutionCategory.denuncias,
       services: [
         'Denúncias em matérias federais',
         'Corrupção, meio ambiente, povos indígenas',
@@ -325,7 +325,7 @@ class LocalInstitutionRepository {
       address: 'Av. Afonso Pena, 3297',
       neighborhood: 'Centro',
       phone: '(67) 3314-4639 / 156',
-      category: InstitutionCategory.outros,
+      category: InstitutionCategory.denuncias,
       services: [
         'Reclamações e denúncias de serviços municipais',
         'Sugestões e elogios',

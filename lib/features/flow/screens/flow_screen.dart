@@ -17,9 +17,21 @@ class FlowScreen extends ConsumerStatefulWidget {
 }
 
 class _FlowScreenState extends ConsumerState<FlowScreen> {
-  int _step = 0; // 0 = payment, 1 = location
+  int _step = 0; // 0 = payment (se aplicavel), 1 = location
   final _neighborhoodController = TextEditingController();
   bool _loadingGps = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Se a categoria não precisa de pergunta de pagamento, pula direto pra localização
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final flow = ref.read(flowProvider);
+      if (flow.category != null && !flow.category!.requiresPaymentQuestion) {
+        setState(() => _step = 1);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -30,6 +42,7 @@ class _FlowScreenState extends ConsumerState<FlowScreen> {
   @override
   Widget build(BuildContext context) {
     final flow = ref.watch(flowProvider);
+    final needsPayment = flow.category?.requiresPaymentQuestion ?? true;
     return Scaffold(
       appBar: GeoAppBar(title: flow.category?.label ?? 'Orientação'),
       body: SafeArea(
@@ -40,7 +53,9 @@ class _FlowScreenState extends ConsumerState<FlowScreen> {
               horizontal: isWide ? constraints.maxWidth * 0.2 : 24,
               vertical: 32,
             ),
-            child: _step == 0 ? _buildPaymentStep(context) : _buildLocationStep(context),
+            child: (_step == 0 && needsPayment)
+                ? _buildPaymentStep(context)
+                : _buildLocationStep(context, hidePaymentStep: !needsPayment),
           );
         }),
       ),
@@ -109,12 +124,12 @@ class _FlowScreenState extends ConsumerState<FlowScreen> {
     );
   }
 
-  Widget _buildLocationStep(BuildContext context) {
+  Widget _buildLocationStep(BuildContext context, {bool hidePaymentStep = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildStepIndicator(1),
-        const SizedBox(height: 32),
+        if (!hidePaymentStep) _buildStepIndicator(1),
+        if (!hidePaymentStep) const SizedBox(height: 32) else const SizedBox(height: 8),
         Text(
           AppStrings.locationQuestion,
           style: Theme.of(context).textTheme.displayMedium,
@@ -157,11 +172,13 @@ class _FlowScreenState extends ConsumerState<FlowScreen> {
           onPressed: _onTypeNeighborhood,
           child: const Text('Buscar por bairro'),
         ),
-        const SizedBox(height: 16),
-        TextButton(
-          onPressed: () => setState(() => _step = 0),
-          child: const Text('← Voltar'),
-        ),
+        if (!hidePaymentStep) ...[
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () => setState(() => _step = 0),
+            child: const Text('← Voltar'),
+          ),
+        ],
       ],
     );
   }
