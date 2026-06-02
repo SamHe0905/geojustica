@@ -70,7 +70,7 @@ class HistoryScreen extends ConsumerWidget {
                   leading: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle),
                     child: const Icon(Icons.history_rounded,
                         color: AppColors.primary, size: 20),
@@ -105,7 +105,7 @@ class HistoryScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle),
             child: const Icon(Icons.history_rounded,
                 size: 56, color: AppColors.primary),

@@ -113,7 +113,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                 border: Border.all(color: Colors.white, width: 2),
                                 boxShadow: [
                                   BoxShadow(
-                                      color: color.withOpacity(0.4), blurRadius: 6),
+                                      color: color.withValues(alpha: 0.4), blurRadius: 6),
                                 ],
                               ),
                               child: const Icon(Icons.balance,
@@ -209,7 +209,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.93),
+        color: Colors.white.withValues(alpha: 0.93),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
       ),

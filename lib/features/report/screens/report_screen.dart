@@ -86,7 +86,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: AppColors.secondary.withOpacity(0.08),
+                        color: AppColors.secondary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -105,7 +105,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                           Switch(
                             value: !_anonymous,
                             onChanged: (v) => setState(() => _anonymous = !v),
-                            activeColor: AppColors.secondary,
+                            activeThumbColor: AppColors.secondary,
                           ),
                         ],
                       ),
@@ -133,9 +133,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: AppColors.warning.withOpacity(0.08),
+                        color: AppColors.warning.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.warning.withOpacity(0.3)),
+                        border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
                       ),
                       child: const Row(
                         children: [
@@ -182,7 +182,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.error.withOpacity(0.9), AppColors.error.withOpacity(0.7)],
+          colors: [AppColors.error.withValues(alpha: 0.9), AppColors.error.withValues(alpha: 0.7)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -193,7 +193,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.report_problem_rounded, color: Colors.white, size: 26),
@@ -245,7 +245,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                 width: selected ? 2 : 1,
               ),
               boxShadow: selected
-                  ? [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 8)]
+                  ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 8)]
                   : null,
             ),
             child: Row(
@@ -315,7 +315,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.15),
+                  color: AppColors.success.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.check_circle_rounded,

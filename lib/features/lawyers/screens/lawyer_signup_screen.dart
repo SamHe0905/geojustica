@@ -170,7 +170,7 @@ class _LawyerSignupScreenState extends ConsumerState<LawyerSignupScreen> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: AppColors.secondary.withOpacity(0.08),
+                      color: AppColors.secondary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Row(
@@ -228,7 +228,7 @@ class _LawyerSignupScreenState extends ConsumerState<LawyerSignupScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.handshake_rounded,
@@ -308,7 +308,7 @@ class _LawyerSignupScreenState extends ConsumerState<LawyerSignupScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                    color: AppColors.success.withOpacity(0.15),
+                    color: AppColors.success.withValues(alpha: 0.15),
                     shape: BoxShape.circle),
                 child: const Icon(Icons.check_circle_rounded,
                     color: AppColors.success, size: 48),

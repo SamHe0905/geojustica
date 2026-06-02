@@ -81,7 +81,7 @@ class LawyerDetailScreen extends ConsumerWidget {
                             ),
                             Text(lawyer.oab,
                                 style: TextStyle(
-                                    color: Colors.white.withOpacity(0.85),
+                                    color: Colors.white.withValues(alpha: 0.85),
                                     fontSize: 13)),
                             const SizedBox(height: 6),
                             Row(
@@ -94,7 +94,7 @@ class LawyerDetailScreen extends ConsumerWidget {
                                         fontWeight: FontWeight.w800)),
                                 Text(' • ${lawyer.ratingCount} avaliações',
                                     style: TextStyle(
-                                        color: Colors.white.withOpacity(0.8),
+                                        color: Colors.white.withValues(alpha: 0.8),
                                         fontSize: 12)),
                               ],
                             ),
@@ -123,7 +123,7 @@ class LawyerDetailScreen extends ConsumerWidget {
                       .map((s) => Chip(
                             label: Text(s.label),
                             backgroundColor:
-                                AppColors.primary.withOpacity(0.1),
+                                AppColors.primary.withValues(alpha: 0.1),
                             labelStyle: const TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w700),
@@ -137,10 +137,10 @@ class LawyerDetailScreen extends ConsumerWidget {
                       margin: const EdgeInsets.symmetric(vertical: 3),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.08),
+                        color: AppColors.success.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                            color: AppColors.success.withOpacity(0.2)),
+                            color: AppColors.success.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         children: [
@@ -206,7 +206,7 @@ class LawyerDetailScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.warning.withOpacity(0.08),
+                    color: AppColors.warning.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Row(

@@ -238,9 +238,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
       builder: (_, __) => Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.error.withOpacity(0.08 + _pulseController.value * 0.08),
+          color: AppColors.error.withValues(alpha: 0.08 + _pulseController.value * 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.error.withOpacity(0.4), width: 1.5),
+          border: Border.all(color: AppColors.error.withValues(alpha: 0.4), width: 1.5),
         ),
         child: Row(
           children: [
@@ -274,9 +274,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.08),
+        color: AppColors.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -298,7 +298,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.secondary.withOpacity(0.06),
+        color: AppColors.secondary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

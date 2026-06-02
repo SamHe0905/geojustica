@@ -63,7 +63,7 @@ class LawyersScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.handshake_rounded, color: Colors.white, size: 24),
@@ -81,7 +81,7 @@ class LawyersScreen extends ConsumerWidget {
                 Text(
                   '$count profissionais com atendimento social, gratuito ou facilitado',
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 12,
                       height: 1.3),
                 ),
@@ -107,7 +107,7 @@ class LawyersScreen extends ConsumerWidget {
             onSelected: (v) => ref.read(lawyerFilterProvider.notifier).state =
                 filter.copyWith(onlyFree: v),
             backgroundColor: Colors.white,
-            selectedColor: AppColors.success.withOpacity(0.2),
+            selectedColor: AppColors.success.withValues(alpha: 0.2),
           ),
           const SizedBox(width: 8),
           FilterChip(
@@ -118,7 +118,7 @@ class LawyersScreen extends ConsumerWidget {
             onSelected: (v) => ref.read(lawyerFilterProvider.notifier).state =
                 filter.copyWith(onlyVerified: v),
             backgroundColor: Colors.white,
-            selectedColor: AppColors.secondary.withOpacity(0.2),
+            selectedColor: AppColors.secondary.withValues(alpha: 0.2),
           ),
           const SizedBox(width: 8),
           for (final cat in InstitutionCategory.values) ...[
@@ -130,7 +130,7 @@ class LawyersScreen extends ConsumerWidget {
                     filter.copyWith(category: v ? cat : null);
               },
               backgroundColor: Colors.white,
-              selectedColor: AppColors.primary.withOpacity(0.2),
+              selectedColor: AppColors.primary.withValues(alpha: 0.2),
             ),
             const SizedBox(width: 8),
           ],
@@ -180,7 +180,7 @@ class _LawyerCard extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 28,
-                    backgroundColor: AppColors.primary.withOpacity(0.15),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.15),
                     child: Text(
                       lawyer.initials,
                       style: const TextStyle(
@@ -249,7 +249,7 @@ class _LawyerCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
                         color: (isFree ? AppColors.success : AppColors.primary)
-                            .withOpacity(0.1),
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(

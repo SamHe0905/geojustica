@@ -46,12 +46,12 @@ class _InstitutionCardState extends State<InstitutionCard> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: _hover ? color.withOpacity(0.4) : AppColors.divider,
+            color: _hover ? color.withValues(alpha: 0.4) : AppColors.divider,
             width: _hover ? 1.5 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: _hover ? color.withOpacity(0.2) : AppColors.cardShadow,
+              color: _hover ? color.withValues(alpha: 0.2) : AppColors.cardShadow,
               blurRadius: _hover ? 14 : 8,
               offset: Offset(0, _hover ? 5 : 2),
             ),
@@ -74,7 +74,7 @@ class _InstitutionCardState extends State<InstitutionCard> {
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [color.withOpacity(0.18), color.withOpacity(0.08)],
+                            colors: [color.withValues(alpha: 0.18), color.withValues(alpha: 0.08)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -117,9 +117,9 @@ class _InstitutionCardState extends State<InstitutionCard> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.12),
+                            color: color.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: color.withOpacity(0.2)),
+                            border: Border.all(color: color.withValues(alpha: 0.2)),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -154,7 +154,7 @@ class _InstitutionCardState extends State<InstitutionCard> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.12),
+                        color: AppColors.success.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Row(
@@ -260,7 +260,7 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: color.withOpacity(0.1),
+      color: color.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
         onTap: onTap,

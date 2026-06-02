@@ -55,24 +55,24 @@ class _CategoryButtonState extends State<CategoryButton> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           elevation: _hover ? 6 : 3,
-          shadowColor: _color.withOpacity(0.35),
+          shadowColor: _color.withValues(alpha: 0.35),
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
             onTap: widget.onTap,
-            splashColor: _color.withOpacity(0.1),
-            highlightColor: _color.withOpacity(0.05),
+            splashColor: _color.withValues(alpha: 0.1),
+            highlightColor: _color.withValues(alpha: 0.05),
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: _hover ? _color.withOpacity(0.5) : _color.withOpacity(0.18),
+                  color: _hover ? _color.withValues(alpha: 0.5) : _color.withValues(alpha: 0.18),
                   width: _hover ? 2 : 1.5,
                 ),
                 gradient: LinearGradient(
                   colors: [
                     Colors.white,
-                    _color.withOpacity(0.04),
+                    _color.withValues(alpha: 0.04),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -86,8 +86,8 @@ class _CategoryButtonState extends State<CategoryButton> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          _color.withOpacity(0.18),
-                          _color.withOpacity(0.10),
+                          _color.withValues(alpha: 0.18),
+                          _color.withValues(alpha: 0.10),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -95,7 +95,7 @@ class _CategoryButtonState extends State<CategoryButton> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: _color.withOpacity(0.18),
+                          color: _color.withValues(alpha: 0.18),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
