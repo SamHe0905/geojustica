@@ -4,16 +4,25 @@ import '../repositories/report_repository.dart';
 
 final reportRepositoryProvider = Provider((ref) => ReportRepository());
 
-final reportListProvider = StateNotifierProvider<ReportListNotifier, List<Report>>(
+final reportListProvider =
+    StateNotifierProvider<ReportListNotifier, List<Report>>(
   (ref) => ReportListNotifier(ref.watch(reportRepositoryProvider)),
 );
 
 class ReportListNotifier extends StateNotifier<List<Report>> {
   final ReportRepository _repo;
-  ReportListNotifier(this._repo) : super(_repo.getAll());
-
-  void submit(Report report) {
-    _repo.add(report);
-    state = _repo.getAll();
+  ReportListNotifier(this._repo) : super([]) {
+    _load();
   }
+
+  Future<void> _load() async {
+    state = await _repo.getAll();
+  }
+
+  Future<void> submit(Report report) async {
+    await _repo.add(report);
+    await _load();
+  }
+
+  Future<void> refresh() => _load();
 }

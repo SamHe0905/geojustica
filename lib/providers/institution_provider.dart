@@ -2,18 +2,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import '../models/institution.dart';
 import '../models/flow_state.dart';
-import '../repositories/local_institution_repository.dart';
+import '../repositories/supabase_institution_repository.dart';
 
-final localRepoProvider = Provider((ref) => LocalInstitutionRepository());
+final institutionRepoProvider = Provider((ref) => SupabaseInstitutionRepository());
 
 final allInstitutionsProvider = FutureProvider<List<Institution>>((ref) async {
-  return ref.watch(localRepoProvider).getAll();
+  return ref.watch(institutionRepoProvider).getAll();
 });
 
-final institutionsByFlowProvider = FutureProvider.family<List<Institution>, FlowState>(
+final institutionsByFlowProvider =
+    FutureProvider.family<List<Institution>, FlowState>(
   (ref, flowState) async {
     if (flowState.category == null) return [];
-    final repo = ref.watch(localRepoProvider);
+    final repo = ref.watch(institutionRepoProvider);
     final bool onlyFree = flowState.paymentAbility == PaymentAbility.no;
     LatLng? location;
     if (flowState.hasLocation) {
@@ -27,6 +28,7 @@ final institutionsByFlowProvider = FutureProvider.family<List<Institution>, Flow
   },
 );
 
-final institutionDetailProvider = FutureProvider.family<Institution?, String>((ref, id) async {
-  return ref.watch(localRepoProvider).getById(id);
+final institutionDetailProvider =
+    FutureProvider.family<Institution?, String>((ref, id) async {
+  return ref.watch(institutionRepoProvider).getById(id);
 });
