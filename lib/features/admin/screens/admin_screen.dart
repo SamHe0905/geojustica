@@ -45,17 +45,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Bloqueia acesso sem login
-    final authed = ref.watch(adminAuthProvider);
-    if (!authed) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go(AppRoutes.adminLogin);
-      });
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
+    // Auth já é verificada via GoRouter redirect, então aqui só renderiza
     final reports = ref.watch(reportListProvider);
 
     return Scaffold(
