@@ -31,11 +31,6 @@ class HomeScreen extends ConsumerWidget {
           tooltip: 'Mapa Geral',
           onPressed: () => context.push(AppRoutes.mapAll),
         ),
-        IconButton(
-          icon: const Icon(Icons.admin_panel_settings_rounded, color: Colors.white),
-          tooltip: 'Painel Admin',
-          onPressed: () => context.push(AppRoutes.admin),
-        ),
       ]),
       floatingActionButton: const SosButton(),
       body: SafeArea(

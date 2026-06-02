@@ -15,6 +15,7 @@ class AppRoutes {
   static const String lawyerDetail = '/advogados/:id';
   static String lawyerById(String id) => '/advogados/$id';
   static const String admin = '/admin';
+  static const String adminLogin = '/admin/login';
   static const String adminImport = '/admin/importar';
   static const String adminInstitutions = '/admin/instituicoes';
 }
