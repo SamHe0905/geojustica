@@ -16,6 +16,6 @@ echo "==> Baixando dependencias..."
 flutter pub get
 
 echo "==> Buildando para Web (release)..."
-flutter build web --release --web-renderer canvaskit
+flutter build web --release
 
 echo "==> Build concluido em build/web"
