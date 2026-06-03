@@ -39,49 +39,36 @@ class DiscoveredOrg {
 class OsmDiscoveryService {
   static const String _endpoint = 'https://overpass-api.de/api/interpreter';
 
+  /// Bounding box mais amplo de Campo Grande/MS (fallback se area() falhar)
+  static const String _bbox = '-20.65,-54.78,-20.32,-54.42';
+
   Future<List<DiscoveredOrg>> discoverInCampoGrande() async {
+    // Estratégia: usa bounding box ao invés de wikidata (mais confiavel/rapido)
     final query = '''
-[out:json][timeout:60];
-area["wikidata"="Q170192"]->.cg;
+[out:json][timeout:90];
 (
-  // Tribunais e órgãos jurídicos
-  nwr["amenity"="courthouse"](area.cg);
-  nwr["government"](area.cg);
-  nwr["office"="government"](area.cg);
-  nwr["office"="diplomatic"](area.cg);
-  nwr["office"="political_party"](area.cg);
-  nwr["office"="notary"](area.cg);
-  nwr["office"="lawyer"](area.cg);
-
-  // Prefeituras e administração
-  nwr["amenity"="townhall"](area.cg);
-  nwr["building"="public"](area.cg);
-  nwr["building"="civic"](area.cg);
-  nwr["building"="government"](area.cg);
-
-  // Segurança pública
-  nwr["amenity"="police"](area.cg);
-  nwr["amenity"="fire_station"](area.cg);
-
-  // Assistência social
-  nwr["amenity"="social_facility"](area.cg);
-  nwr["amenity"="community_centre"](area.cg);
-  nwr["social_facility"](area.cg);
-  nwr["office"="ngo"](area.cg);
-  nwr["office"="charity"](area.cg);
-  nwr["office"="foundation"](area.cg);
-
-  // Saúde pública
-  nwr["amenity"="hospital"](area.cg);
-  nwr["amenity"="clinic"](area.cg);
-  nwr["healthcare"="hospital"](area.cg);
-  nwr["healthcare"="centre"](area.cg);
-
-  // Cartórios e identificação
-  nwr["office"="register"](area.cg);
-
-  // Por nome (pega coisas com tags incompletas)
-  nwr["name"~"defensoria|procon|ministério público|ministerio publico|ouvidoria|inss|previdência|previdencia|conselho tutelar|cras|creas|delegacia|ufms|uniderp|ucdb|fadir|facsul|prefeitura|câmara municipal|camara municipal",i](area.cg);
+  nwr["amenity"="courthouse"]($_bbox);
+  nwr["government"]($_bbox);
+  nwr["office"="government"]($_bbox);
+  nwr["office"="notary"]($_bbox);
+  nwr["office"="lawyer"]($_bbox);
+  nwr["office"="register"]($_bbox);
+  nwr["office"="ngo"]($_bbox);
+  nwr["office"="charity"]($_bbox);
+  nwr["office"="foundation"]($_bbox);
+  nwr["amenity"="townhall"]($_bbox);
+  nwr["building"="public"]($_bbox);
+  nwr["building"="civic"]($_bbox);
+  nwr["building"="government"]($_bbox);
+  nwr["amenity"="police"]($_bbox);
+  nwr["amenity"="fire_station"]($_bbox);
+  nwr["amenity"="social_facility"]($_bbox);
+  nwr["amenity"="community_centre"]($_bbox);
+  nwr["social_facility"]($_bbox);
+  nwr["amenity"="hospital"]($_bbox);
+  nwr["amenity"="clinic"]($_bbox);
+  nwr["healthcare"]($_bbox);
+  nwr["name"~"defensoria|procon|ministério|ministerio|ouvidoria|inss|previdência|previdencia|conselho tutelar|cras|creas|delegacia|prefeitura|câmara municipal|camara municipal|tribunal|fórum|forum|cartório|cartorio|upa|ubs|hospital|santa casa|posto de saúde|posto de saude|oab",i]($_bbox);
 );
 out center tags;
 ''';
@@ -93,14 +80,20 @@ out center tags;
             body: {'data': query},
             headers: {'User-Agent': 'GeoJustica/1.0 (campo-grande-ms)'},
           )
-          .timeout(const Duration(seconds: 70));
+          .timeout(const Duration(seconds: 100));
 
       if (response.statusCode != 200) {
-        throw Exception('Erro ${response.statusCode} da API OpenStreetMap');
+        throw Exception(
+            'Overpass retornou ${response.statusCode}. Tente novamente em alguns segundos.');
       }
 
       final json = jsonDecode(response.body) as Map<String, dynamic>;
       final elements = (json['elements'] as List?) ?? [];
+
+      if (elements.isEmpty) {
+        throw Exception(
+            'OpenStreetMap não retornou nenhum órgão em Campo Grande. Pode ser falta temporária do servidor — tente novamente em 1 minuto.');
+      }
 
       final results = <DiscoveredOrg>[];
       for (final el in elements) {
