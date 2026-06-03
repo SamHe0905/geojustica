@@ -2,6 +2,8 @@ class AppRoutes {
   static const String home = '/';
   static const String search = '/buscar';
   static const String flow = '/fluxo';
+  static const String subcategory = '/categoria';
+  static const String safetyCheck = '/seguranca';
   static const String results = '/resultados';
   static const String institutionDetail = '/instituicao/:id';
   static const String map = '/mapa';

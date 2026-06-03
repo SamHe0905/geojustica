@@ -284,7 +284,13 @@ class HomeScreen extends ConsumerWidget {
           onTap: () {
             ref.read(flowProvider.notifier).reset();
             ref.read(flowProvider.notifier).setCategory(cat);
-            context.push(AppRoutes.flow);
+            // Violência: tela de segurança primeiro
+            if (cat == InstitutionCategory.violenciaDomestica) {
+              context.push(AppRoutes.safetyCheck);
+            } else {
+              // Demais: tela de sub-categorias (que decide se tem ou pula)
+              context.push(AppRoutes.subcategory);
+            }
           },
         );
       }).toList(),

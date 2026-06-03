@@ -6,6 +6,8 @@ import 'core/theme/app_theme.dart';
 import 'providers/settings_provider.dart';
 import 'features/home/screens/home_screen.dart';
 import 'features/flow/screens/flow_screen.dart';
+import 'features/category_flow/screens/subcategory_screen.dart';
+import 'features/category_flow/screens/safety_check_screen.dart';
 import 'features/results/screens/results_screen.dart';
 import 'features/institution/screens/institution_detail_screen.dart';
 import 'features/map/screens/map_screen.dart';
@@ -34,6 +36,8 @@ class GeoJusticaApp extends ConsumerWidget {
         GoRoute(path: AppRoutes.home, builder: (_, __) => const HomeScreen()),
         GoRoute(path: AppRoutes.search, builder: (_, __) => const SearchScreen()),
         GoRoute(path: AppRoutes.flow, builder: (_, __) => const FlowScreen()),
+        GoRoute(path: AppRoutes.subcategory, builder: (_, __) => const SubcategoryScreen()),
+        GoRoute(path: AppRoutes.safetyCheck, builder: (_, __) => const SafetyCheckScreen()),
         GoRoute(path: AppRoutes.results, builder: (_, __) => const ResultsScreen()),
         GoRoute(
           path: AppRoutes.institutionDetail,

@@ -10,6 +10,9 @@ class FlowNotifier extends StateNotifier<FlowState> {
   void setCategory(InstitutionCategory category) =>
       state = state.copyWith(category: category);
 
+  void setSubcategory(String subcategoryId) =>
+      state = state.copyWith(subcategoryId: subcategoryId);
+
   void setPaymentAbility(PaymentAbility ability) =>
       state = state.copyWith(paymentAbility: ability);
 

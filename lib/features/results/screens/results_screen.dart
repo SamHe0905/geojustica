@@ -6,6 +6,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../providers/flow_provider.dart';
 import '../../../providers/institution_provider.dart';
+import '../../category_flow/widgets/required_docs_banner.dart';
 import '../../../services/schedule_service.dart';
 import '../../../shared/widgets/geo_app_bar.dart';
 import '../widgets/institution_card.dart';
@@ -55,6 +56,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const RequiredDocsBanner(),
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: isWide ? constraints.maxWidth * 0.1 : 16,

@@ -4,6 +4,7 @@ enum PaymentAbility { yes, no, unsure }
 
 class FlowState {
   final InstitutionCategory? category;
+  final String? subcategoryId;
   final PaymentAbility? paymentAbility;
   final double? userLatitude;
   final double? userLongitude;
@@ -11,6 +12,7 @@ class FlowState {
 
   const FlowState({
     this.category,
+    this.subcategoryId,
     this.paymentAbility,
     this.userLatitude,
     this.userLongitude,
@@ -21,6 +23,7 @@ class FlowState {
 
   FlowState copyWith({
     InstitutionCategory? category,
+    String? subcategoryId,
     PaymentAbility? paymentAbility,
     double? userLatitude,
     double? userLongitude,
@@ -28,6 +31,7 @@ class FlowState {
   }) =>
       FlowState(
         category: category ?? this.category,
+        subcategoryId: subcategoryId ?? this.subcategoryId,
         paymentAbility: paymentAbility ?? this.paymentAbility,
         userLatitude: userLatitude ?? this.userLatitude,
         userLongitude: userLongitude ?? this.userLongitude,
