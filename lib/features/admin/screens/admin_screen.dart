@@ -53,6 +53,11 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
         title: 'Painel Administrativo',
         actions: [
           IconButton(
+            icon: const Icon(Icons.travel_explore_rounded, color: Colors.white),
+            tooltip: 'Descobrir órgãos no OpenStreetMap',
+            onPressed: () => context.push(AppRoutes.adminDiscovery),
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh_rounded, color: Colors.white),
             tooltip: 'Atualizar',
             onPressed: () {

@@ -13,6 +13,7 @@ import 'features/institution/screens/institution_detail_screen.dart';
 import 'features/map/screens/map_screen.dart';
 import 'features/search/screens/search_screen.dart';
 import 'features/admin/screens/admin_guard.dart';
+import 'features/admin/screens/discovery_screen.dart';
 import 'features/report/screens/report_screen.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
 import 'features/history/screens/history_screen.dart';
@@ -52,6 +53,7 @@ class GeoJusticaApp extends ConsumerWidget {
         ),
         GoRoute(path: AppRoutes.admin, builder: (_, __) => const AdminGuard()),
         GoRoute(path: AppRoutes.adminLogin, builder: (_, __) => const AdminGuard()),
+        GoRoute(path: AppRoutes.adminDiscovery, builder: (_, __) => const DiscoveryScreen()),
         GoRoute(
           path: AppRoutes.report,
           builder: (_, state) =>
