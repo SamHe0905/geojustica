@@ -20,6 +20,7 @@ import 'features/lawyers/screens/lawyers_screen.dart';
 import 'features/lawyers/screens/lawyer_detail_screen.dart';
 import 'features/lawyers/screens/lawyer_signup_screen.dart';
 import 'shared/widgets/install_app_popup.dart';
+import 'shared/widgets/flow_guard.dart';
 
 class GeoJusticaApp extends ConsumerWidget {
   const GeoJusticaApp({super.key});
@@ -35,16 +36,16 @@ class GeoJusticaApp extends ConsumerWidget {
         GoRoute(path: AppRoutes.onboarding, builder: (_, __) => const OnboardingScreen()),
         GoRoute(path: AppRoutes.home, builder: (_, __) => const HomeScreen()),
         GoRoute(path: AppRoutes.search, builder: (_, __) => const SearchScreen()),
-        GoRoute(path: AppRoutes.flow, builder: (_, __) => const FlowScreen()),
-        GoRoute(path: AppRoutes.subcategory, builder: (_, __) => const SubcategoryScreen()),
-        GoRoute(path: AppRoutes.safetyCheck, builder: (_, __) => const SafetyCheckScreen()),
-        GoRoute(path: AppRoutes.results, builder: (_, __) => const ResultsScreen()),
+        GoRoute(path: AppRoutes.flow, builder: (_, __) => const FlowGuard(child: FlowScreen())),
+        GoRoute(path: AppRoutes.subcategory, builder: (_, __) => const FlowGuard(child: SubcategoryScreen())),
+        GoRoute(path: AppRoutes.safetyCheck, builder: (_, __) => const FlowGuard(child: SafetyCheckScreen())),
+        GoRoute(path: AppRoutes.results, builder: (_, __) => const FlowGuard(child: ResultsScreen())),
         GoRoute(
           path: AppRoutes.institutionDetail,
           builder: (_, state) =>
               InstitutionDetailScreen(id: state.pathParameters['id']!),
         ),
-        GoRoute(path: AppRoutes.map, builder: (_, __) => const MapScreen()),
+        GoRoute(path: AppRoutes.map, builder: (_, __) => const FlowGuard(child: MapScreen())),
         GoRoute(
           path: AppRoutes.mapAll,
           builder: (_, __) => const MapScreen(showAll: true),

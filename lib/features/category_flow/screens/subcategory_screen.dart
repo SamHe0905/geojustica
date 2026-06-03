@@ -14,11 +14,7 @@ class SubcategoryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final flow = ref.watch(flowProvider);
-    final category = flow.category;
-    if (category == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => context.go(AppRoutes.home));
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final category = flow.category!;
 
     final subs = SubcategoryRegistry.get(category);
     // Se não tem sub-categorias, vai direto pro fluxo
