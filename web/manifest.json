@@ -1,25 +1,42 @@
 {
-  "name": "GeoJustiça - Acesso à Justiça",
+  "name": "GeoJustiça - Acesso à Justiça em Campo Grande/MS",
   "short_name": "GeoJustiça",
-  "start_url": ".",
+  "description": "Plataforma popular de orientação para acesso gratuito à justiça em Campo Grande/MS. Encontre instituições, advogados parceiros, faça denúncias e tenha acesso a documentos.",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "portrait-primary",
   "background_color": "#F7FAF7",
   "theme_color": "#1B7A4A",
-  "description": "Plataforma popular de orientação para acesso gratuito à justiça em Campo Grande/MS",
-  "orientation": "portrait-primary",
-  "prefer_related_applications": false,
   "lang": "pt-BR",
-  "scope": ".",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "categories": ["government", "social", "utilities", "education"],
   "icons": [
+    {
+      "src": "icons/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
     {
       "src": "icons/Icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icons/Icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icons/Icon-maskable-192.png",
@@ -32,6 +49,38 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "SOS Emergência",
+      "short_name": "SOS",
+      "description": "Acesso rápido a números de emergência",
+      "url": "/?sos=1",
+      "icons": [{ "src": "icons/logo.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Buscar ajuda",
+      "short_name": "Buscar",
+      "description": "Descreva sua situação",
+      "url": "/buscar",
+      "icons": [{ "src": "icons/logo.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Advogados Parceiros",
+      "short_name": "Advogados",
+      "description": "Encontre advogados que atendem gratuitamente",
+      "url": "/advogados",
+      "icons": [{ "src": "icons/logo.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tela inicial com categorias"
     }
   ]
 }

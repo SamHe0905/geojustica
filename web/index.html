@@ -1,62 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
   <base href="$FLUTTER_BASE_HREF">
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="GeoJustiça - Acesso gratuito à justiça em Campo Grande/MS">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1B6B3A">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="GeoJustiça">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-  <link rel="icon" type="image/png" href="favicon.png"/>
-  <title>GeoJustiça</title>
+  <meta name="description" content="GeoJustica - Plataforma popular de orientacao para acesso gratuito a justica em Campo Grande/MS">
+  <meta name="keywords" content="justica gratuita, Campo Grande, MS, direitos, defensoria, advogado, denuncia">
+  <meta name="author" content="GeoJustica">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1B7A4A">
+
   <link rel="manifest" href="manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="GeoJustiça">
+  <meta name="apple-mobile-web-app-title" content="GeoJustica">
+
+  <link rel="icon" type="image/svg+xml" href="icons/logo.svg"/>
+  <link rel="alternate icon" type="image/png" href="favicon.png"/>
+  <link rel="apple-touch-icon" href="icons/logo.svg">
+  <link rel="mask-icon" href="icons/logo.svg" color="#1B7A4A">
+
+  <meta property="og:title" content="GeoJustica - Acesso a Justica em Campo Grande/MS">
+  <meta property="og:description" content="Encontre instituicoes, advogados parceiros e ouvidorias. Servico gratuito.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="icons/logo.svg">
+  <meta property="og:locale" content="pt_BR">
+
+  <title>GeoJustica</title>
+
   <style>
-    body {
-      background-color: #F5F8F5;
-      margin: 0;
-      padding: 0;
+    html, body {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-    #loading {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      font-family: 'Nunito', sans-serif;
-      color: #1B6B3A;
+    body { background: linear-gradient(135deg, #0A5732 0%, #1B7A4A 50%, #2E9D64 100%); }
+    #splash {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
     }
-    #loading h1 { font-size: 2rem; margin-bottom: 8px; }
-    #loading p { color: #555; }
-    .spinner {
-      width: 48px; height: 48px;
-      border: 5px solid #c8e6c9;
-      border-top-color: #1B6B3A;
+    #splash.fade-out { opacity: 0; pointer-events: none; }
+    .splash-logo {
+      width: 140px; height: 140px;
+      background: rgba(255,255,255,0.15);
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 32px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      animation: float 2.5s ease-in-out infinite;
+    }
+    .splash-logo svg { width: 88px; height: 88px; }
+    .splash-title {
+      color: white; font-size: 2.2rem; font-weight: 900;
+      letter-spacing: 0.5px; margin: 0;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .splash-subtitle {
+      color: rgba(255,255,255,0.85); font-size: 0.95rem;
+      margin: 6px 0 30px 0; font-weight: 500;
+    }
+    .splash-loader {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.25);
+      border-top-color: white;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
-      margin-bottom: 16px;
+    }
+    .splash-footer {
+      position: absolute; bottom: 28px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.78rem; letter-spacing: 0.4px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
   </style>
 </head>
 <body>
-  <div id="loading">
-    <div class="spinner"></div>
-    <h1>⚖️ GeoJustiça</h1>
-    <p>Carregando...</p>
+  <div id="splash">
+    <div class="splash-logo">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g fill="white">
+          <rect x="95" y="40" width="10" height="120" rx="3"/>
+          <rect x="70" y="160" width="60" height="10" rx="3"/>
+          <rect x="80" y="170" width="40" height="14" rx="4"/>
+          <circle cx="100" cy="40" r="9"/>
+          <rect x="20" y="48" width="160" height="8" rx="3"/>
+          <rect x="38" y="56" width="4" height="22" rx="2"/>
+          <rect x="158" y="56" width="4" height="22" rx="2"/>
+          <path d="M 12 78 Q 40 100 68 78 L 60 88 Q 40 100 20 88 Z"/>
+          <path d="M 132 78 Q 160 100 188 78 L 180 88 Q 160 100 140 88 Z"/>
+        </g>
+      </svg>
+    </div>
+    <h1 class="splash-title">GeoJustica</h1>
+    <p class="splash-subtitle">Acesso a justica em Campo Grande/MS</p>
+    <div class="splash-loader"></div>
+    <div class="splash-footer">Servico publico e gratuito</div>
   </div>
+
   <script>
     window.addEventListener('flutter-first-frame', function () {
-      var loading = document.getElementById('loading');
-      if (loading) loading.remove();
+      var splash = document.getElementById('splash');
+      if (splash) {
+        splash.classList.add('fade-out');
+        setTimeout(function () { splash.remove(); }, 600);
+      }
     });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function (err) {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
