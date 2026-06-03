@@ -35,33 +35,33 @@ class DiscoveredOrg {
 
 /// Consulta o OpenStreetMap via Overpass API para descobrir órgãos públicos.
 class OsmDiscoveryService {
-  // Endpoint mais rápido e estável atualmente
   static const String _endpoint = 'https://overpass-api.de/api/interpreter';
 
-  // Bounding box de Campo Grande/MS aproximado (sul, oeste, norte, leste)
-  static const String _campoGrandeBBox = '-20.6,-54.75,-20.35,-54.45';
-
-  /// Busca órgãos públicos em Campo Grande.
+  /// Busca órgãos públicos APENAS dentro da fronteira administrativa de Campo Grande/MS.
+  /// Usa wikidata Q170192 para evitar confusão com outras 'Campo Grande' do Brasil.
   /// Pode demorar 15–30s na primeira chamada.
   Future<List<DiscoveredOrg>> discoverInCampoGrande() async {
+    // area["wikidata"="Q170192"] = relation administrativa do município de
+    // Campo Grande/MS (não pega Campo Grande/RJ, Campo Grande/PB, etc).
     final query = '''
-[out:json][timeout:30];
+[out:json][timeout:45];
+area["wikidata"="Q170192"]->.cg;
 (
-  node["amenity"="courthouse"]($_campoGrandeBBox);
-  node["amenity"="townhall"]($_campoGrandeBBox);
-  node["amenity"="police"]($_campoGrandeBBox);
-  node["amenity"="community_centre"]($_campoGrandeBBox);
-  node["amenity"="social_facility"]($_campoGrandeBBox);
-  node["office"="government"]($_campoGrandeBBox);
-  node["office"="notary"]($_campoGrandeBBox);
-  node["office"="ngo"]($_campoGrandeBBox);
-  way["amenity"="courthouse"]($_campoGrandeBBox);
-  way["amenity"="townhall"]($_campoGrandeBBox);
-  way["amenity"="police"]($_campoGrandeBBox);
-  way["amenity"="community_centre"]($_campoGrandeBBox);
-  way["amenity"="social_facility"]($_campoGrandeBBox);
-  way["office"="government"]($_campoGrandeBBox);
-  way["office"="notary"]($_campoGrandeBBox);
+  node["amenity"="courthouse"](area.cg);
+  node["amenity"="townhall"](area.cg);
+  node["amenity"="police"](area.cg);
+  node["amenity"="community_centre"](area.cg);
+  node["amenity"="social_facility"](area.cg);
+  node["office"="government"](area.cg);
+  node["office"="notary"](area.cg);
+  node["office"="ngo"](area.cg);
+  way["amenity"="courthouse"](area.cg);
+  way["amenity"="townhall"](area.cg);
+  way["amenity"="police"](area.cg);
+  way["amenity"="community_centre"](area.cg);
+  way["amenity"="social_facility"](area.cg);
+  way["office"="government"](area.cg);
+  way["office"="notary"](area.cg);
 );
 out center tags;
 ''';
@@ -88,6 +88,13 @@ out center tags;
         final tags = (map['tags'] as Map?)?.cast<String, dynamic>() ?? {};
         final name = (tags['name'] ?? tags['operator'] ?? '').toString().trim();
         if (name.isEmpty || name.length < 3) continue;
+
+        // Filtro defensivo: se vier com cidade no endereço, exige Campo Grande
+        final city = tags['addr:city']?.toString().toLowerCase() ?? '';
+        if (city.isNotEmpty &&
+            !city.contains('campo grande')) {
+          continue;
+        }
 
         // Coordenadas: ponto direto ou center de way/relation
         final lat = (map['lat'] as num?)?.toDouble() ??

@@ -130,14 +130,14 @@ class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Buscar no OpenStreetMap',
+                Text('Buscar órgãos públicos',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w900)),
                 SizedBox(height: 2),
                 Text(
-                  'O app consulta a base do OpenStreetMap e classifica automaticamente os órgãos públicos de Campo Grande.',
+                  'Apenas dentro da fronteira de Campo Grande/MS. Não pega de outros municípios.',
                   style: TextStyle(color: Colors.white, fontSize: 12, height: 1.3),
                 ),
               ],
