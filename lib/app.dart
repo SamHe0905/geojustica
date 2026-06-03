@@ -17,6 +17,7 @@ import 'features/history/screens/history_screen.dart';
 import 'features/lawyers/screens/lawyers_screen.dart';
 import 'features/lawyers/screens/lawyer_detail_screen.dart';
 import 'features/lawyers/screens/lawyer_signup_screen.dart';
+import 'shared/widgets/install_app_popup.dart';
 
 class GeoJusticaApp extends ConsumerWidget {
   const GeoJusticaApp({super.key});
@@ -88,7 +89,7 @@ class GeoJusticaApp extends ConsumerWidget {
           data: MediaQuery.of(context).copyWith(
             textScaler: TextScaler.linear(settings.fontScale),
           ),
-          child: child!,
+          child: InstallAppPopup(child: child!),
         );
       },
     );
