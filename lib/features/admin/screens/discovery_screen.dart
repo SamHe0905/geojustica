@@ -328,40 +328,69 @@ class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
         final o = list[i];
         return Card(
           margin: EdgeInsets.zero,
-          child: CheckboxListTile(
-            value: o.selected,
-            onChanged: (v) => setState(() => o.selected = v ?? false),
-            controlAffinity: ListTileControlAffinity.leading,
-            title: Text(o.name,
-                style: const TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Row(
               children: [
-                Text('${o.address} • ${o.neighborhood}',
-                    style: const TextStyle(fontSize: 12)),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(o.category.label,
+                Checkbox(
+                  value: o.selected,
+                  onChanged: (v) => setState(() => o.selected = v ?? false),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(o.name,
                           style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.primary)),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(o.tagSource,
-                        style: const TextStyle(
-                            fontSize: 10,
-                            color: AppColors.textMuted,
-                            fontFamily: 'monospace')),
-                  ],
+                              fontWeight: FontWeight.w700, fontSize: 14)),
+                      const SizedBox(height: 2),
+                      Text('${o.address} • ${o.neighborhood}',
+                          style: const TextStyle(
+                              fontSize: 12, color: AppColors.textSecondary)),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          // Dropdown de categoria editável
+                          InkWell(
+                            onTap: () => _pickCategory(o),
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                    color: AppColors.primary.withValues(alpha: 0.3)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(o.category.label,
+                                      style: const TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.primary)),
+                                  const SizedBox(width: 4),
+                                  const Icon(Icons.edit_rounded,
+                                      size: 10, color: AppColors.primary),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(o.tagSource,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontSize: 10,
+                                    color: AppColors.textMuted,
+                                    fontFamily: 'monospace')),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -407,6 +436,47 @@ class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
             label: Text('Importar ($selectedCount)'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _pickCategory(DiscoveredOrg org) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('Mudar categoria',
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+            ),
+            const Divider(height: 1),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: InstitutionCategory.values
+                    .map((c) => ListTile(
+                          title: Text(c.label),
+                          selected: org.category == c,
+                          trailing: org.category == c
+                              ? const Icon(Icons.check_circle_rounded,
+                                  color: AppColors.success)
+                              : null,
+                          onTap: () {
+                            setState(() => org.category = c);
+                            Navigator.pop(context);
+                          },
+                        ))
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
