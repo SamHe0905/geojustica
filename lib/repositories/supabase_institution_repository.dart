@@ -81,6 +81,46 @@ class SupabaseInstitutionRepository {
     }
   }
 
+  /// Insere em lote. O id do modelo é ignorado (o Postgres gera um uuid novo).
+  /// Retorna o número de registros gravados. Lança exceção se o Supabase não
+  /// estiver disponível (import bruto no local não faz sentido nesse fluxo).
+  Future<int> bulkInsert(List<Institution> institutions) async {
+    if (institutions.isEmpty) return 0;
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase indisponível — bulk insert requer conexão.');
+    }
+    final rows = institutions.map(_toInsertRow).toList();
+    await client.from('institutions').insert(rows);
+    return rows.length;
+  }
+
+  /// Atualiza um registro existente (pelo uuid real do Supabase).
+  Future<void> updateOne(String id, Institution data) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase indisponível — update requer conexão.');
+    }
+    await client.from('institutions').update(_toInsertRow(data)).eq('id', id);
+  }
+
+  Map<String, dynamic> _toInsertRow(Institution i) => {
+        'name': i.name,
+        'address': i.address,
+        'neighborhood': i.neighborhood,
+        'phone': i.phone,
+        'whatsapp': i.whatsapp,
+        'category': i.category.name,
+        'services': i.services.join(';'),
+        'schedule': i.schedule,
+        'observations': i.observations,
+        'sphere': i.sphere.name,
+        'latitude': i.latitude,
+        'longitude': i.longitude,
+        'accepts_indigent': i.acceptsIndigent,
+        'is_active': i.isActive,
+      };
+
   Institution _fromRow(Map<String, dynamic> row) {
     final servicesStr = (row['services'] ?? '').toString();
     final services = servicesStr

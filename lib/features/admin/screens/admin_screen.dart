@@ -667,23 +667,37 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
     if (_previewData == null) return;
     setState(() => _importing = true);
     try {
-      // Quais registros realmente serão importados
-      final toImport = switch (_duplicateAction) {
-        DuplicateAction.skip => _newOnes,
-        DuplicateAction.update => _previewData!, // upsert
-        DuplicateAction.addAll => _previewData!, // insert tudo
+      final repo = ref.read(institutionRepoProvider);
+      final existing = await ref.read(allInstitutionsProvider.future);
+      final idByNormName = {
+        for (final e in existing) _normalize(e.name): e.id,
       };
 
-      // NOTE: Para gravar realmente no Supabase, seria necessário criar um
-      // método bulkInsert/bulkUpsert em SupabaseInstitutionRepository.
-      // Por enquanto exibe confirmação. Pode ser implementado depois.
+      int inserted = 0;
+      int updated = 0;
 
-      await Future.delayed(const Duration(milliseconds: 600));
+      switch (_duplicateAction) {
+        case DuplicateAction.skip:
+          inserted = await repo.bulkInsert(_newOnes);
+        case DuplicateAction.addAll:
+          inserted = await repo.bulkInsert(_previewData!);
+        case DuplicateAction.update:
+          inserted = await repo.bulkInsert(_newOnes);
+          for (final dup in _duplicates) {
+            final id = idByNormName[_normalize(dup.name)];
+            if (id == null) continue;
+            await repo.updateOne(id, dup);
+            updated++;
+          }
+      }
+
+      ref.invalidate(allInstitutionsProvider);
 
       if (!mounted) return;
+      final total = inserted + updated;
       setState(() {
         _importing = false;
-        _importStatus = '✓ ${toImport.length} registros prontos para importar.';
+        _importStatus = '✓ Importação concluída ($total registros).';
         _previewData = null;
         _duplicates = [];
         _newOnes = [];
@@ -695,10 +709,10 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           icon: const Icon(Icons.check_circle_rounded,
               color: AppColors.success, size: 48),
-          title: const Text('Pronto para importar'),
+          title: const Text('Importação concluída'),
           content: Text(
-            '${toImport.length} registros foram preparados.\n\n'
-            'A persistência em massa no Supabase será implementada na próxima atualização.',
+            'Inseridos: $inserted\n'
+            'Atualizados: $updated',
           ),
           actions: [
             TextButton(
@@ -709,10 +723,27 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _importing = false;
-        _importStatus = '✗ Erro: $e';
+        _importStatus = '✗ Erro ao salvar no Supabase: $e';
       });
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          icon: const Icon(Icons.error_rounded,
+              color: AppColors.error, size: 48),
+          title: const Text('Falha na importação'),
+          content: Text('$e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
