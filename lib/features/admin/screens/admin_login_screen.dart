@@ -14,29 +14,43 @@ class AdminLoginScreen extends ConsumerStatefulWidget {
 }
 
 class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
-  final _ctrl = TextEditingController();
+  final _userCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
+  final _passFocus = FocusNode();
   bool _loading = false;
   String? _error;
   bool _obscure = true;
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _userCtrl.dispose();
+    _passCtrl.dispose();
+    _passFocus.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    final username = _userCtrl.text.trim();
+    final password = _passCtrl.text;
+    if (username.isEmpty || password.isEmpty) {
+      setState(() => _error = 'Preencha usuário e senha.');
+      return;
+    }
+
     setState(() {
       _loading = true;
       _error = null;
     });
-    final ok = await ref.read(adminAuthProvider.notifier).login(_ctrl.text.trim());
+
+    final error =
+        await ref.read(adminAuthProvider.notifier).login(username, password);
+
     if (!mounted) return;
-    setState(() => _loading = false);
-    if (!ok) {
-      setState(() => _error = 'Senha incorreta');
-    }
-    // Se ok=true, o AdminGuard automaticamente troca para AdminScreen
+    setState(() {
+      _loading = false;
+      _error = error;
+    });
+    // Se error == null, o AdminGuard troca sozinho para o AdminScreen.
   }
 
   @override
@@ -72,15 +86,27 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'Acesso permitido apenas para administradores autorizados.',
+                    'Entre com a conta que o administrador criou para você.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 28),
                   TextField(
-                    controller: _ctrl,
-                    obscureText: _obscure,
+                    controller: _userCtrl,
                     autofocus: true,
+                    autocorrect: false,
+                    textInputAction: TextInputAction.next,
+                    onSubmitted: (_) => _passFocus.requestFocus(),
+                    decoration: const InputDecoration(
+                      labelText: 'Usuário',
+                      prefixIcon: Icon(Icons.person_outline_rounded),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _passCtrl,
+                    focusNode: _passFocus,
+                    obscureText: _obscure,
                     onSubmitted: (_) => _submit(),
                     decoration: InputDecoration(
                       labelText: 'Senha',
@@ -89,10 +115,10 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         icon: Icon(_obscure
                             ? Icons.visibility_off
                             : Icons.visibility),
-                        onPressed: () =>
-                            setState(() => _obscure = !_obscure),
+                        onPressed: () => setState(() => _obscure = !_obscure),
                       ),
                       errorText: _error,
+                      errorMaxLines: 3,
                     ),
                   ),
                   const SizedBox(height: 16),

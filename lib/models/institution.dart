@@ -58,7 +58,21 @@ enum InstitutionCategory {
   }
 }
 
-enum AdminSphere { municipal, estadual, federal, naoGovernamental }
+enum AdminSphere {
+  municipal,
+  estadual,
+  federal,
+  naoGovernamental;
+
+  String get label {
+    switch (this) {
+      case municipal: return 'Municipal';
+      case estadual: return 'Estadual';
+      case federal: return 'Federal';
+      case naoGovernamental: return 'Não governamental';
+    }
+  }
+}
 
 class Institution {
   final String id;

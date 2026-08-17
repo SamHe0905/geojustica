@@ -9,8 +9,11 @@ import '../../../models/report.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/institution_provider.dart';
 import '../../../providers/report_provider.dart';
+import '../../../providers/team_provider.dart';
 import '../../../services/excel_import_service.dart';
 import '../../../shared/widgets/geo_app_bar.dart';
+import '../widgets/team_tab.dart';
+import 'institution_edit_screen.dart';
 
 class AdminScreen extends ConsumerStatefulWidget {
   const AdminScreen({super.key});
@@ -24,6 +27,7 @@ enum DuplicateAction { skip, update, addAll }
 class _AdminScreenState extends ConsumerState<AdminScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late final bool _isOwner;
   bool _importing = false;
   String? _importStatus;
   List<Institution>? _previewData;
@@ -34,7 +38,10 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    // A aba "Equipe" só existe para o dono. O AdminGuard remonta esta tela a
+    // cada login, então basta ler o papel uma vez.
+    _isOwner = ref.read(adminAuthProvider).isOwner;
+    _tabController = TabController(length: _isOwner ? 4 : 3, vsync: this);
   }
 
   @override
@@ -45,18 +52,50 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Auth já é verificada via GoRouter redirect, então aqui só renderiza
+    // Auth já é verificada pelo AdminGuard, então aqui só renderiza
     final reports = ref.watch(reportListProvider);
+    final member = ref.watch(adminAuthProvider).member;
 
     return Scaffold(
       appBar: GeoAppBar(
         title: 'Painel Administrativo',
         actions: [
+          if (member != null)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Tooltip(
+                  message: '${member.name} (${member.role.label})',
+                  child: Chip(
+                    visualDensity: VisualDensity.compact,
+                    backgroundColor: Colors.white.withValues(alpha: 0.18),
+                    side: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.25)),
+                    avatar: Icon(
+                      member.isOwner
+                          ? Icons.shield_rounded
+                          : Icons.person_rounded,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    label: Text(
+                      '@${member.username}',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.refresh_rounded, color: Colors.white),
             tooltip: 'Atualizar',
             onPressed: () {
               ref.invalidate(allInstitutionsProvider);
+              ref.invalidate(adminInstitutionsProvider);
+              ref.invalidate(teamListProvider);
               ref.read(reportListProvider.notifier).refresh();
             },
           ),
@@ -110,6 +149,8 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                   ),
                   text: 'Denúncias',
                 ),
+                if (_isOwner)
+                  const Tab(icon: Icon(Icons.groups_rounded), text: 'Equipe'),
               ],
             ),
           ),
@@ -120,6 +161,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                 _buildImportTab(),
                 _buildInstitutionsTab(),
                 _buildReportsTab(reports),
+                if (_isOwner) const TeamTab(),
               ],
             ),
           ),
@@ -428,55 +470,130 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
 
   // ============== ABA: INSTITUIÇÕES ==============
   Widget _buildInstitutionsTab() {
-    final institutionsAsync = ref.watch(allInstitutionsProvider);
+    final institutionsAsync = ref.watch(adminInstitutionsProvider);
     return institutionsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('Erro: $e')),
+      error: (e, _) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.cloud_off_rounded,
+                  color: AppColors.error, size: 48),
+              const SizedBox(height: 12),
+              Text('$e',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppColors.error)),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => ref.invalidate(adminInstitutionsProvider),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Tentar de novo'),
+              ),
+            ],
+          ),
+        ),
+      ),
       data: (institutions) {
+        final inactive = institutions.where((i) => !i.isActive).length;
         return Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(12),
-              child: _statBox(
-                '${institutions.length}',
-                'Instituições cadastradas',
-                AppColors.primary,
-                Icons.balance_rounded,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _statBox(
+                      '${institutions.length}',
+                      'Órgãos cadastrados',
+                      AppColors.primary,
+                      Icons.balance_rounded,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _statBox(
+                      '$inactive',
+                      'Desativados',
+                      inactive > 0 ? AppColors.warning : AppColors.textMuted,
+                      Icons.visibility_off_rounded,
+                    ),
+                  ),
+                ],
               ),
             ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14),
+              child: Row(
+                children: [
+                  Icon(Icons.touch_app_rounded,
+                      size: 15, color: AppColors.textMuted),
+                  SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Toque em um órgão para editar todos os dados, inclusive a categoria.',
+                      style: TextStyle(
+                          fontSize: 12, color: AppColors.textSecondary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
             Expanded(
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                 itemCount: institutions.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 4),
                 itemBuilder: (context, i) {
                   final inst = institutions[i];
+                  final active = inst.isActive;
                   return Card(
                     child: ListTile(
+                      onTap: () => _editInstitution(inst),
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
+                            color: (active
+                                    ? AppColors.primary
+                                    : AppColors.textMuted)
+                                .withValues(alpha: 0.1),
                             shape: BoxShape.circle),
-                        child: const Icon(Icons.balance,
-                            color: AppColors.primary, size: 20),
+                        child: Icon(Icons.balance,
+                            color:
+                                active ? AppColors.primary : AppColors.textMuted,
+                            size: 20),
                       ),
                       title: Text(inst.name,
                           style: const TextStyle(fontWeight: FontWeight.w700)),
                       subtitle:
                           Text('${inst.category.label} • ${inst.neighborhood}'),
-                      trailing: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text('Ativo',
-                            style: TextStyle(
-                                color: AppColors.success,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12)),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: (active
+                                      ? AppColors.success
+                                      : AppColors.textMuted)
+                                  .withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(active ? 'Ativo' : 'Inativo',
+                                style: TextStyle(
+                                    color: active
+                                        ? AppColors.success
+                                        : AppColors.textMuted,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12)),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.edit_rounded,
+                              size: 18, color: AppColors.textMuted),
+                        ],
                       ),
                     ),
                   );
@@ -487,6 +604,19 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
         );
       },
     );
+  }
+
+  Future<void> _editInstitution(Institution inst) async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => InstitutionEditScreen(institution: inst),
+      ),
+    );
+    if (saved == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${inst.name} foi atualizado.')),
+      );
+    }
   }
 
   // ============== ABA: DENÚNCIAS ==============
@@ -635,7 +765,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
           ExcelImportService().parseExcel(result.files.single.bytes!);
 
       // Detectar duplicatas pelo nome (normalizado)
-      final existing = await ref.read(allInstitutionsProvider.future);
+      final existing = await ref.read(adminInstitutionsProvider.future);
       final existingNames = existing
           .map((i) => _normalize(i.name))
           .toSet();
@@ -668,7 +798,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
     setState(() => _importing = true);
     try {
       final repo = ref.read(institutionRepoProvider);
-      final existing = await ref.read(allInstitutionsProvider.future);
+      final existing = await ref.read(adminInstitutionsProvider.future);
       final idByNormName = {
         for (final e in existing) _normalize(e.name): e.id,
       };
@@ -692,6 +822,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
       }
 
       ref.invalidate(allInstitutionsProvider);
+      ref.invalidate(adminInstitutionsProvider);
 
       if (!mounted) return;
       final total = inserted + updated;

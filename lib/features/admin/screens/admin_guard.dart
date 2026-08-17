@@ -11,7 +11,15 @@ class AdminGuard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authed = ref.watch(adminAuthProvider);
-    return authed ? const AdminScreen() : const AdminLoginScreen();
+    final auth = ref.watch(adminAuthProvider);
+
+    // Enquanto o token salvo é revalidado no servidor.
+    if (auth.restoring) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return auth.isLoggedIn ? const AdminScreen() : const AdminLoginScreen();
   }
 }

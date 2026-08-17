@@ -1,0 +1,3 @@
+Pasta declarada em pubspec.yaml (flutter > assets). Sem esse arquivo o git não
+versiona o diretório vazio e o build quebra com "unable to find directory entry
+in pubspec.yaml".

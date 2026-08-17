@@ -10,6 +10,11 @@ final allInstitutionsProvider = FutureProvider<List<Institution>>((ref) async {
   return ref.watch(institutionRepoProvider).getAll();
 });
 
+/// Lista do painel administrativo: inclui os órgãos desativados.
+final adminInstitutionsProvider = FutureProvider<List<Institution>>((ref) async {
+  return ref.watch(institutionRepoProvider).getAllForAdmin();
+});
+
 final institutionsByFlowProvider =
     FutureProvider.family<List<Institution>, FlowState>(
   (ref, flowState) async {

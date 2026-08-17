@@ -68,6 +68,18 @@ class SupabaseInstitutionRepository {
     }
   }
 
+  /// Listagem do painel: traz também os inativos e nunca cai para o local
+  /// silenciosamente — se o Supabase estiver fora, o admin precisa saber, senão
+  /// editaria registros que não seriam gravados.
+  Future<List<Institution>> getAllForAdmin() async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase indisponível — o painel precisa de conexão.');
+    }
+    final response = await client.from('institutions').select().order('name');
+    return (response as List).map((e) => _fromRow(e)).toList();
+  }
+
   Future<Institution?> getById(String id) async {
     final client = _client;
     if (client == null) return _local.getById(id);
