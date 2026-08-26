@@ -47,6 +47,11 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
     // cada login, então basta ler o papel uma vez.
     _isOwner = ref.read(adminAuthProvider).isOwner;
     _tabController = TabController(length: _isOwner ? 4 : 3, vsync: this);
+    // Rebuild ao trocar de aba, para o botão flutuante "Adicionar órgão"
+    // aparecer só na aba Instituições.
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) setState(() {});
+    });
   }
 
   @override
@@ -116,6 +121,15 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
           ),
         ],
       ),
+      floatingActionButton: (_tabController.index == 1 && !_selectionMode)
+          ? FloatingActionButton.extended(
+              onPressed: _createInstitution,
+              icon: const Icon(Icons.add_location_alt_rounded),
+              label: const Text('Adicionar órgão'),
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            )
+          : null,
       body: Column(
         children: [
           Container(
@@ -655,7 +669,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
             const SizedBox(height: 6),
             Expanded(
               child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 88),
                 itemCount: institutions.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 4),
                 itemBuilder: (context, i) {
@@ -811,32 +825,21 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: _selectionMode ? null : _createInstitution,
-                  icon: const Icon(Icons.add_location_alt_rounded, size: 18),
-                  label: const Text('Adicionar órgão'),
-                ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: OutlinedButton.icon(
+              onPressed: institutions.isEmpty
+                  ? null
+                  : () => setState(() {
+                      _selectionMode = !_selectionMode;
+                      _selectedIds.clear();
+                    }),
+              icon: Icon(
+                _selectionMode ? Icons.close_rounded : Icons.checklist_rounded,
+                size: 18,
               ),
-              const SizedBox(width: 8),
-              OutlinedButton.icon(
-                onPressed: institutions.isEmpty
-                    ? null
-                    : () => setState(() {
-                        _selectionMode = !_selectionMode;
-                        _selectedIds.clear();
-                      }),
-                icon: Icon(
-                  _selectionMode
-                      ? Icons.close_rounded
-                      : Icons.checklist_rounded,
-                  size: 18,
-                ),
-                label: Text(_selectionMode ? 'Cancelar' : 'Selecionar'),
-              ),
-            ],
+              label: Text(_selectionMode ? 'Cancelar seleção' : 'Selecionar para excluir'),
+            ),
           ),
           if (dupCount > 0 && !_selectionMode) ...[
             const SizedBox(height: 6),
