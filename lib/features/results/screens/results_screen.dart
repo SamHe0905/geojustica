@@ -11,6 +11,7 @@ import '../../../services/schedule_service.dart';
 import '../../../shared/widgets/geo_app_bar.dart';
 import '../../../shared/widgets/geo_icon.dart';
 import '../../../shared/widgets/geo_state_view.dart';
+import '../../../shared/widgets/location_picker.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../widgets/institution_card.dart';
 
@@ -66,6 +67,39 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const RequiredDocsBanner(),
+                  if (flow.locationLabel != null)
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        isWide ? constraints.maxWidth * 0.1 : 16,
+                        10,
+                        isWide ? constraints.maxWidth * 0.1 : 16,
+                        0,
+                      ),
+                      child: Row(
+                        children: [
+                          const GeoIcon('pin', color: AppColors.primary, size: 16),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Perto de: ${flow.locationLabel}',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => showLocationPicker(context, ref),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              minimumSize: const Size(0, 32),
+                            ),
+                            child: const Text('Trocar'),
+                          ),
+                        ],
+                      ),
+                    ),
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: isWide ? constraints.maxWidth * 0.1 : 16,

@@ -27,6 +27,7 @@ class _FlowScreenState extends ConsumerState<FlowScreen> {
   _FlowStep _step = _FlowStep.intent;
   final _neighborhoodController = TextEditingController();
   bool _loadingGps = false;
+  bool _navigated = false;
 
   @override
   void initState() {
@@ -57,6 +58,17 @@ class _FlowScreenState extends ConsumerState<FlowScreen> {
       content = _buildIntentStep(context);
     } else if (needsGuided && _step == _FlowStep.payment) {
       content = _buildPaymentStep(context);
+    } else if (flow.hasAnyLocation && !_navigated) {
+      // Localização já definida (na home ou numa busca anterior): não pergunta
+      // de novo — vai direto para os resultados. Trocar fica na home/resultados.
+      _navigated = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.pushReplacement(AppRoutes.results);
+      });
+      content = const Padding(
+        padding: EdgeInsets.symmetric(vertical: 60),
+        child: Center(child: CircularProgressIndicator()),
+      );
     } else {
       content = _buildLocationStep(context, hasGuidedSteps: needsGuided);
     }

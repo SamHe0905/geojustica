@@ -27,6 +27,18 @@ class FlowState {
 
   bool get hasLocation => userLatitude != null && userLongitude != null;
 
+  /// Alguma localização definida — por GPS ou bairro digitado.
+  bool get hasAnyLocation =>
+      hasLocation || (neighborhoodInput?.trim().isNotEmpty ?? false);
+
+  /// Rótulo curto do local atual, para exibir na home/resultados.
+  String? get locationLabel {
+    final bairro = neighborhoodInput?.trim();
+    if (bairro != null && bairro.isNotEmpty) return bairro;
+    if (hasLocation) return 'Perto de você';
+    return null;
+  }
+
   FlowState copyWith({
     InstitutionCategory? category,
     String? subcategoryId,

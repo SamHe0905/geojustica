@@ -72,4 +72,26 @@ void main() {
       expect(c.requiresPaymentQuestion, isFalse, reason: c.name);
     }
   });
+
+  test('reset preserva a localização; clearLocation a remove', () {
+    final n = FlowNotifier();
+    n.reset();
+    n.setCategory(InstitutionCategory.trabalho);
+    n.setNeighborhood('Centro');
+    n.setGpsLocation(-20.44, -54.64);
+
+    // Trocar de categoria (reset) NÃO pode apagar a localização — era o bug de
+    // ter que reinformar o bairro a cada busca.
+    n.reset();
+    expect(n.state.category, isNull);
+    expect(n.state.neighborhoodInput, 'Centro');
+    expect(n.state.hasLocation, isTrue);
+    expect(n.state.hasAnyLocation, isTrue);
+
+    // "Trocar" localização limpa de fato.
+    n.clearLocation();
+    expect(n.state.hasAnyLocation, isFalse);
+    expect(n.state.neighborhoodInput, isNull);
+    expect(n.state.hasLocation, isFalse);
+  });
 }

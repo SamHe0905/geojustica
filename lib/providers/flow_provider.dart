@@ -134,8 +134,26 @@ class FlowNotifier extends StateNotifier<FlowState> {
     _persist();
   }
 
+  /// Limpa a consulta (categoria/intenção/pagamento) MAS preserva a localização
+  /// do usuário — ela é uma preferência que vale entre buscas, não algo para
+  /// reperguntar a cada categoria escolhida.
   void reset() {
-    state = const FlowState();
+    state = FlowState(
+      userLatitude: state.userLatitude,
+      userLongitude: state.userLongitude,
+      neighborhoodInput: state.neighborhoodInput,
+    );
+    _persist();
+  }
+
+  /// Esquece a localização salva (usado quando a pessoa toca em "trocar").
+  void clearLocation() {
+    state = FlowState(
+      category: state.category,
+      subcategoryId: state.subcategoryId,
+      intent: state.intent,
+      paymentAbility: state.paymentAbility,
+    );
     _persist();
   }
 }

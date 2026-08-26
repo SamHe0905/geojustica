@@ -13,6 +13,7 @@ import '../../../shared/widgets/sos_button.dart';
 import '../../../shared/widgets/accessibility_bar.dart';
 import '../../../shared/widgets/staggered_entrance.dart';
 import '../../../shared/widgets/geo_icon.dart';
+import '../../../shared/widgets/location_picker.dart';
 import '../widgets/category_button.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -50,7 +51,9 @@ class HomeScreen extends ConsumerWidget {
                   _buildHero(context, allInst.maybeWhen(data: (list) => list.length, orElse: () => 0)),
                   const SizedBox(height: 20),
                   _buildSearchBar(context),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 12),
+                  const LocationChip(),
+                  const SizedBox(height: 28),
                   _buildSectionTitle(context),
                   const SizedBox(height: 16),
                   _buildCategoryGrid(context, ref, isWide),
