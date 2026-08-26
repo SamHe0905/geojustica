@@ -67,17 +67,13 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.primaryDark, AppColors.primary],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      shape: BoxShape.circle,
+                      color: AppColors.forest,
+                      borderRadius: BorderRadius.circular(18),
                     ),
                     child: const Icon(Icons.admin_panel_settings_rounded,
-                        color: Colors.white, size: 48),
+                        color: Colors.white, size: 44),
                   ),
                   const SizedBox(height: 20),
                   const Text(

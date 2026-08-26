@@ -36,8 +36,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('RESULTADOS'), findsOneWidget);
 
-    // Toca no botão voltar do GeoAppBar.
-    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+    // Toca no botão voltar do GeoAppBar (localizado por tooltip — o ícone
+    // agora é um SVG, não um IconData).
+    await tester.tap(find.byTooltip('Voltar'));
     await tester.pumpAndSettle();
 
     // Deve ter caído na home — nunca numa tela vazia.

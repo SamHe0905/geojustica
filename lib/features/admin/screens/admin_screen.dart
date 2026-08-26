@@ -12,6 +12,7 @@ import '../../../providers/report_provider.dart';
 import '../../../providers/team_provider.dart';
 import '../../../services/excel_import_service.dart';
 import '../../../shared/widgets/geo_app_bar.dart';
+import '../../../shared/widgets/skeleton.dart';
 import '../widgets/team_tab.dart';
 import 'institution_edit_screen.dart';
 
@@ -579,7 +580,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
   Widget _buildInstitutionsTab() {
     final institutionsAsync = ref.watch(adminInstitutionsProvider);
     return institutionsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const SkeletonList(items: 6),
       error: (e, _) => Center(
         child: Padding(
           padding: const EdgeInsets.all(24),

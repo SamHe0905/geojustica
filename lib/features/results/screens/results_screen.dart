@@ -9,6 +9,9 @@ import '../../../providers/institution_provider.dart';
 import '../../category_flow/widgets/required_docs_banner.dart';
 import '../../../services/schedule_service.dart';
 import '../../../shared/widgets/geo_app_bar.dart';
+import '../../../shared/widgets/geo_icon.dart';
+import '../../../shared/widgets/geo_state_view.dart';
+import '../../../shared/widgets/skeleton.dart';
 import '../widgets/institution_card.dart';
 
 class ResultsScreen extends ConsumerStatefulWidget {
@@ -32,7 +35,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         title: flow.category?.label ?? AppStrings.resultsTitle,
         actions: [
           IconButton(
-            icon: const Icon(Icons.map_rounded, color: Colors.white),
+            icon: const GeoIcon('map', color: Colors.white, size: 22),
             tooltip: 'Ver no mapa',
             onPressed: () => context.push(AppRoutes.map),
           ),
@@ -41,9 +44,15 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
       body: SafeArea(
         child: LayoutBuilder(builder: (context, constraints) {
           final isWide = constraints.maxWidth > 600;
+          final listPadding = EdgeInsets.symmetric(
+            horizontal: isWide ? constraints.maxWidth * 0.1 : 16,
+            vertical: 8,
+          );
           return institutionsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('Erro: $e')),
+            loading: () => SkeletonList(padding: listPadding),
+            error: (e, _) => GeoStateView.error(
+              onRetry: () => ref.invalidate(institutionsByFlowProvider(flow)),
+            ),
             data: (allInstitutions) {
               final institutions = _onlyOpenNow
                   ? allInstitutions
@@ -149,26 +158,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
   }
 
   Widget _buildEmpty(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.search_off_rounded,
-              size: 64, color: AppColors.textSecondary),
-          const SizedBox(height: 16),
-          const Text(AppStrings.noResults,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w700,
-              )),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () => context.go(AppRoutes.home),
-            child: const Text('Voltar ao início'),
-          ),
-        ],
-      ),
+    return GeoStateView.empty(
+      title: 'Nada encontrado por aqui',
+      message: 'Não achamos instituições para essa busca. Tente descrever de outro jeito ou veja todas as áreas.',
+      actionLabel: 'Ver todas as áreas',
+      onAction: () => context.go(AppRoutes.home),
     );
   }
 }

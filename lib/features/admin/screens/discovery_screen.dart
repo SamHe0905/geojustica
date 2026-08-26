@@ -107,20 +107,17 @@ class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.secondary, AppColors.secondaryLight],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.forest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(11),
             ),
             child: const Icon(Icons.travel_explore_rounded,
                 color: Colors.white, size: 24),

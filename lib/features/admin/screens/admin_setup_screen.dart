@@ -75,19 +75,15 @@ class _AdminSetupScreenState extends ConsumerState<AdminSetupScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.primaryDark, AppColors.primary],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: AppColors.forest,
+                        borderRadius: BorderRadius.circular(18),
                       ),
                       child: const Icon(
                         Icons.shield_rounded,
                         color: Colors.white,
-                        size: 48,
+                        size: 44,
                       ),
                     ),
                     const SizedBox(height: 20),
