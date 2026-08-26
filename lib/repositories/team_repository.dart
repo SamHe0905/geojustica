@@ -18,13 +18,15 @@ class TeamRepository {
   SupabaseClient get _client {
     if (!SupabaseConfig.useSupabase) {
       throw const TeamException(
-          'Backend desativado — o painel precisa do Supabase para autenticar.');
+        'Backend desativado — o painel precisa do Supabase para autenticar.',
+      );
     }
     try {
       return Supabase.instance.client;
     } catch (_) {
       throw const TeamException(
-          'Sem conexão com o Supabase. Verifique a internet e tente de novo.');
+        'Sem conexão com o Supabase. Verifique a internet e tente de novo.',
+      );
     }
   }
 
@@ -40,13 +42,43 @@ class TeamRepository {
     }
   }
 
+  /// True quando ainda não existe nenhum dono ativo — o painel precisa que o
+  /// primeiro responsável seja criado (tela de setup no 1º acesso).
+  Future<bool> needsSetup() async {
+    return _call(() async {
+      final result = await _client.rpc('team_needs_setup');
+      return result == true;
+    });
+  }
+
+  /// Cria o primeiro dono do painel. Só funciona enquanto não há nenhum dono
+  /// ativo; devolve a sessão já logada.
+  Future<AdminSession?> bootstrap(
+    String username,
+    String name,
+    String password,
+  ) async {
+    return _call(() async {
+      final result = await _client.rpc(
+        'team_bootstrap',
+        params: {
+          'p_username': username,
+          'p_name': name,
+          'p_password': password,
+        },
+      );
+      if (result == null) return null;
+      return AdminSession.fromMap(Map<String, dynamic>.from(result as Map));
+    });
+  }
+
   /// Retorna a sessão criada, ou null se usuário/senha não conferem.
   Future<AdminSession?> login(String username, String password) async {
     return _call(() async {
-      final result = await _client.rpc('team_login', params: {
-        'p_username': username,
-        'p_password': password,
-      });
+      final result = await _client.rpc(
+        'team_login',
+        params: {'p_username': username, 'p_password': password},
+      );
       if (result == null) return null;
       return AdminSession.fromMap(Map<String, dynamic>.from(result as Map));
     });
@@ -82,13 +114,18 @@ class TeamRepository {
     required String password,
     required TeamRole role,
   }) async {
-    await _call(() => _client.rpc('team_create', params: {
+    await _call(
+      () => _client.rpc(
+        'team_create',
+        params: {
           'p_token': token,
           'p_username': username,
           'p_name': name,
           'p_password': password,
           'p_role': role.name,
-        }));
+        },
+      ),
+    );
   }
 
   Future<void> update(
@@ -98,28 +135,36 @@ class TeamRepository {
     required TeamRole role,
     required bool isActive,
   }) async {
-    await _call(() => _client.rpc('team_update', params: {
+    await _call(
+      () => _client.rpc(
+        'team_update',
+        params: {
           'p_token': token,
           'p_id': id,
           'p_name': name,
           'p_role': role.name,
           'p_is_active': isActive,
-        }));
+        },
+      ),
+    );
   }
 
-  Future<void> setPassword(String token,
-      {required String id, required String password}) async {
-    await _call(() => _client.rpc('team_set_password', params: {
-          'p_token': token,
-          'p_id': id,
-          'p_password': password,
-        }));
+  Future<void> setPassword(
+    String token, {
+    required String id,
+    required String password,
+  }) async {
+    await _call(
+      () => _client.rpc(
+        'team_set_password',
+        params: {'p_token': token, 'p_id': id, 'p_password': password},
+      ),
+    );
   }
 
   Future<void> delete(String token, {required String id}) async {
-    await _call(() => _client.rpc('team_delete', params: {
-          'p_token': token,
-          'p_id': id,
-        }));
+    await _call(
+      () => _client.rpc('team_delete', params: {'p_token': token, 'p_id': id}),
+    );
   }
 }

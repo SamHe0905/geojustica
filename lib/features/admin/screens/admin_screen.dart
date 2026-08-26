@@ -35,6 +35,10 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
   List<Institution> _newOnes = [];
   DuplicateAction _duplicateAction = DuplicateAction.skip;
 
+  // Seleção manual na aba Instituições (para excluir duplicados na mão).
+  bool _selectionMode = false;
+  final Set<String> _selectedIds = {};
+
   @override
   void initState() {
     super.initState();
@@ -70,7 +74,8 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                     visualDensity: VisualDensity.compact,
                     backgroundColor: Colors.white.withValues(alpha: 0.18),
                     side: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.25)),
+                      color: Colors.white.withValues(alpha: 0.25),
+                    ),
                     avatar: Icon(
                       member.isOwner
                           ? Icons.shield_rounded
@@ -81,9 +86,10 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                     label: Text(
                       '@${member.username}',
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700),
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
@@ -120,8 +126,14 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
               indicatorColor: Colors.white,
               isScrollable: true,
               tabs: [
-                const Tab(icon: Icon(Icons.upload_file_rounded), text: 'Importar'),
-                const Tab(icon: Icon(Icons.list_alt_rounded), text: 'Instituições'),
+                const Tab(
+                  icon: Icon(Icons.upload_file_rounded),
+                  text: 'Importar',
+                ),
+                const Tab(
+                  icon: Icon(Icons.list_alt_rounded),
+                  text: 'Instituições',
+                ),
                 Tab(
                   icon: Stack(
                     clipBehavior: Clip.none,
@@ -133,16 +145,21 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                           right: -8,
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 2),
+                              horizontal: 5,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.error,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Text('${reports.length}',
-                                style: const TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w800)),
+                            child: Text(
+                              '${reports.length}',
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
                           ),
                         ),
                     ],
@@ -187,9 +204,14 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white))
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
                   : const Icon(Icons.upload_file_rounded),
-              label: Text(_importing ? 'Lendo arquivo...' : 'Selecionar planilha Excel'),
+              label: Text(
+                _importing ? 'Lendo arquivo...' : 'Selecionar planilha Excel',
+              ),
             ),
           if (_importStatus != null && _previewData == null) ...[
             const SizedBox(height: 14),
@@ -201,7 +223,10 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
               ),
               child: Text(
                 _importStatus!,
-                style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -224,22 +249,39 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
         children: [
           Row(
             children: const [
-              Icon(Icons.lightbulb_rounded, color: AppColors.secondary, size: 20),
+              Icon(
+                Icons.lightbulb_rounded,
+                color: AppColors.secondary,
+                size: 20,
+              ),
               SizedBox(width: 8),
-              Text('Como importar planilhas',
-                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+              Text(
+                'Como importar planilhas',
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+              ),
             ],
           ),
           const SizedBox(height: 12),
-          _step('1', 'A planilha precisa ter as colunas obrigatórias (nome, endereço, bairro, categoria, latitude, longitude).'),
+          _step(
+            '1',
+            'A planilha precisa ter as colunas obrigatórias (nome, endereço, bairro, categoria, latitude, longitude).',
+          ),
           _step('2', 'Os nomes das colunas devem estar na primeira linha.'),
-          _step('3', 'Os múltiplos serviços/categorias devem ser separados por ponto e vírgula (;).'),
-          _step('4', 'Após selecionar o arquivo, você poderá decidir o que fazer com instituições que já existem (duplicatas).'),
+          _step(
+            '3',
+            'Os múltiplos serviços/categorias devem ser separados por ponto e vírgula (;).',
+          ),
+          _step(
+            '4',
+            'Após selecionar o arquivo, você poderá decidir o que fazer com instituições que já existem (duplicatas).',
+          ),
           const SizedBox(height: 12),
           const Divider(),
           const SizedBox(height: 8),
-          const Text('Colunas esperadas:',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
+          const Text(
+            'Colunas esperadas:',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+          ),
           const SizedBox(height: 6),
           Container(
             padding: const EdgeInsets.all(10),
@@ -254,9 +296,10 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
               'esfera, latitude, longitude,\n'
               'atende_gratuito, ativo',
               style: TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                  color: AppColors.textSecondary),
+                fontFamily: 'monospace',
+                fontSize: 12,
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
         ],
@@ -278,16 +321,22 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: Text(n,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 12)),
+              child: Text(
+                n,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12,
+                ),
+              ),
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(text, style: const TextStyle(fontSize: 13, height: 1.4)),
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 13, height: 1.4),
+            ),
           ),
         ],
       ),
@@ -302,26 +351,39 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
         Row(
           children: [
             Expanded(
-              child: _statBox('${_previewData!.length}', 'Total lidos',
-                  AppColors.primary, Icons.list_alt_rounded),
+              child: _statBox(
+                '${_previewData!.length}',
+                'Total lidos',
+                AppColors.primary,
+                Icons.list_alt_rounded,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _statBox('${_newOnes.length}', 'Novos',
-                  AppColors.success, Icons.fiber_new_rounded),
+              child: _statBox(
+                '${_newOnes.length}',
+                'Novos',
+                AppColors.success,
+                Icons.fiber_new_rounded,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _statBox('${_duplicates.length}', 'Já existem',
-                  hasDups ? AppColors.warning : AppColors.textMuted,
-                  Icons.content_copy_rounded),
+              child: _statBox(
+                '${_duplicates.length}',
+                'Já existem',
+                hasDups ? AppColors.warning : AppColors.textMuted,
+                Icons.content_copy_rounded,
+              ),
             ),
           ],
         ),
         const SizedBox(height: 18),
         if (hasDups) ...[
-          const Text('Como tratar as duplicatas?',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+          const Text(
+            'Como tratar as duplicatas?',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+          ),
           const SizedBox(height: 8),
           _duplicateOption(
             DuplicateAction.skip,
@@ -345,39 +407,63 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
             AppColors.error,
           ),
           const SizedBox(height: 14),
-          const Text('Duplicatas detectadas:',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+          const Text(
+            'Duplicatas detectadas:',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+          ),
           const SizedBox(height: 6),
-          ..._duplicates.take(3).map((d) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Text('• ${d.name}',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-              )),
+          ..._duplicates
+              .take(3)
+              .map(
+                (d) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    '• ${d.name}',
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
           if (_duplicates.length > 3)
-            Text('… e mais ${_duplicates.length - 3}',
-                style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
+            Text(
+              '… e mais ${_duplicates.length - 3}',
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+            ),
           const SizedBox(height: 14),
         ],
         if (_newOnes.isNotEmpty) ...[
-          const Text('Novos que serão adicionados:',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+          const Text(
+            'Novos que serão adicionados:',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+          ),
           const SizedBox(height: 6),
-          ..._newOnes.take(3).map((d) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Text('• ${d.name}',
-                    style: const TextStyle(color: AppColors.success, fontSize: 13)),
-              )),
+          ..._newOnes
+              .take(3)
+              .map(
+                (d) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    '• ${d.name}',
+                    style: const TextStyle(
+                      color: AppColors.success,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
           if (_newOnes.length > 3)
-            Text('… e mais ${_newOnes.length - 3}',
-                style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
+            Text(
+              '… e mais ${_newOnes.length - 3}',
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+            ),
           const SizedBox(height: 16),
         ],
         ElevatedButton.icon(
           onPressed: _importing ? null : _confirmImport,
           icon: const Icon(Icons.cloud_upload_rounded),
-          label: Text(_importing
-              ? 'Salvando...'
-              : 'Confirmar importação'),
+          label: Text(_importing ? 'Salvando...' : 'Confirmar importação'),
         ),
         const SizedBox(height: 8),
         OutlinedButton(
@@ -395,8 +481,13 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
     );
   }
 
-  Widget _duplicateOption(DuplicateAction action, String label,
-      String desc, IconData icon, Color color) {
+  Widget _duplicateOption(
+    DuplicateAction action,
+    String label,
+    String desc,
+    IconData icon,
+    Color color,
+  ) {
     final selected = _duplicateAction == action;
     return Material(
       color: selected ? color.withValues(alpha: 0.1) : Colors.white,
@@ -419,8 +510,9 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.15),
-                    shape: BoxShape.circle),
+                  color: color.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
                 child: Icon(icon, color: color, size: 20),
               ),
               const SizedBox(width: 12),
@@ -428,11 +520,17 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(label,
-                        style: const TextStyle(fontWeight: FontWeight.w800)),
-                    Text(desc,
-                        style: const TextStyle(
-                            color: AppColors.textSecondary, fontSize: 12)),
+                    Text(
+                      label,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    Text(
+                      desc,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -457,12 +555,21 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
         children: [
           Icon(icon, color: color, size: 20),
           const SizedBox(height: 6),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.w900, color: color)),
-          Text(label,
-              style: const TextStyle(
-                  fontSize: 11, color: AppColors.textSecondary)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 11,
+              color: AppColors.textSecondary,
+            ),
+          ),
         ],
       ),
     );
@@ -479,12 +586,17 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cloud_off_rounded,
-                  color: AppColors.error, size: 48),
+              const Icon(
+                Icons.cloud_off_rounded,
+                color: AppColors.error,
+                size: 48,
+              ),
               const SizedBox(height: 12),
-              Text('$e',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.error)),
+              Text(
+                '$e',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.error),
+              ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: () => ref.invalidate(adminInstitutionsProvider),
@@ -497,6 +609,21 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
       ),
       data: (institutions) {
         final inactive = institutions.where((i) => !i.isActive).length;
+        // Nomes normalizados repetidos = possíveis duplicados (só um aviso
+        // visual; a exclusão é sempre manual).
+        final nameCounts = <String, int>{};
+        for (final inst in institutions) {
+          final key = _normalize(inst.name);
+          nameCounts[key] = (nameCounts[key] ?? 0) + 1;
+        }
+        final dupCount = nameCounts.values
+            .where((c) => c > 1)
+            .fold<int>(0, (a, b) => a + b);
+        // Seleções que não existem mais (ex.: após excluir) são descartadas.
+        _selectedIds.retainWhere(
+          (id) => institutions.any((inst) => inst.id == id),
+        );
+
         return Column(
           children: [
             Padding(
@@ -523,24 +650,8 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14),
-              child: Row(
-                children: [
-                  Icon(Icons.touch_app_rounded,
-                      size: 15, color: AppColors.textMuted),
-                  SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      'Toque em um órgão para editar todos os dados, inclusive a categoria.',
-                      style: TextStyle(
-                          fontSize: 12, color: AppColors.textSecondary),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
+            _institutionsActionBar(institutions, dupCount),
+            const SizedBox(height: 6),
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
@@ -549,61 +660,286 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                 itemBuilder: (context, i) {
                   final inst = institutions[i];
                   final active = inst.isActive;
+                  final isDuplicate =
+                      (nameCounts[_normalize(inst.name)] ?? 0) > 1;
+                  final selected = _selectedIds.contains(inst.id);
                   return Card(
+                    color: selected
+                        ? AppColors.primary.withValues(alpha: 0.06)
+                        : null,
                     child: ListTile(
-                      onTap: () => _editInstitution(inst),
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: (active
+                      onTap: () => _selectionMode
+                          ? _toggleSelection(inst.id)
+                          : _editInstitution(inst),
+                      onLongPress: () {
+                        if (!_selectionMode) {
+                          setState(() {
+                            _selectionMode = true;
+                            _selectedIds.add(inst.id);
+                          });
+                        }
+                      },
+                      leading: _selectionMode
+                          ? Checkbox(
+                              value: selected,
+                              onChanged: (_) => _toggleSelection(inst.id),
+                            )
+                          : Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color:
+                                    (active
+                                            ? AppColors.primary
+                                            : AppColors.textMuted)
+                                        .withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.balance,
+                                color: active
                                     ? AppColors.primary
-                                    : AppColors.textMuted)
-                                .withValues(alpha: 0.1),
-                            shape: BoxShape.circle),
-                        child: Icon(Icons.balance,
-                            color:
-                                active ? AppColors.primary : AppColors.textMuted,
-                            size: 20),
-                      ),
-                      title: Text(inst.name,
-                          style: const TextStyle(fontWeight: FontWeight.w700)),
-                      subtitle:
-                          Text('${inst.category.label} • ${inst.neighborhood}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: (active
-                                      ? AppColors.success
-                                      : AppColors.textMuted)
-                                  .withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
+                                    : AppColors.textMuted,
+                                size: 20,
+                              ),
                             ),
-                            child: Text(active ? 'Ativo' : 'Inativo',
-                                style: TextStyle(
-                                    color: active
-                                        ? AppColors.success
-                                        : AppColors.textMuted,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12)),
+                      title: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              inst.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 4),
-                          const Icon(Icons.edit_rounded,
-                              size: 18, color: AppColors.textMuted),
+                          if (isDuplicate) ...[
+                            const SizedBox(width: 6),
+                            _duplicateBadge(),
+                          ],
                         ],
                       ),
+                      subtitle: Text(
+                        '${inst.category.label} • ${inst.neighborhood}',
+                      ),
+                      trailing: _selectionMode
+                          ? null
+                          : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        (active
+                                                ? AppColors.success
+                                                : AppColors.textMuted)
+                                            .withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    active ? 'Ativo' : 'Inativo',
+                                    style: TextStyle(
+                                      color: active
+                                          ? AppColors.success
+                                          : AppColors.textMuted,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                PopupMenuButton<String>(
+                                  icon: const Icon(
+                                    Icons.more_vert_rounded,
+                                    size: 20,
+                                    color: AppColors.textMuted,
+                                  ),
+                                  onSelected: (v) {
+                                    if (v == 'edit') _editInstitution(inst);
+                                    if (v == 'delete') {
+                                      _confirmDeleteInstitutions([inst]);
+                                    }
+                                  },
+                                  itemBuilder: (_) => const [
+                                    PopupMenuItem(
+                                      value: 'edit',
+                                      child: ListTile(
+                                        leading: Icon(Icons.edit_rounded),
+                                        title: Text('Editar'),
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'delete',
+                                      child: ListTile(
+                                        leading: Icon(
+                                          Icons.delete_outline_rounded,
+                                          color: AppColors.error,
+                                        ),
+                                        title: Text(
+                                          'Excluir',
+                                          style: TextStyle(
+                                            color: AppColors.error,
+                                          ),
+                                        ),
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                     ),
                   );
                 },
               ),
             ),
+            if (_selectionMode) _selectionBottomBar(institutions),
           ],
         );
       },
     );
+  }
+
+  /// Barra de ações da aba: adicionar órgão e entrar/sair do modo seleção.
+  Widget _institutionsActionBar(List<Institution> institutions, int dupCount) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _selectionMode ? null : _createInstitution,
+                  icon: const Icon(Icons.add_location_alt_rounded, size: 18),
+                  label: const Text('Adicionar órgão'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                onPressed: institutions.isEmpty
+                    ? null
+                    : () => setState(() {
+                        _selectionMode = !_selectionMode;
+                        _selectedIds.clear();
+                      }),
+                icon: Icon(
+                  _selectionMode
+                      ? Icons.close_rounded
+                      : Icons.checklist_rounded,
+                  size: 18,
+                ),
+                label: Text(_selectionMode ? 'Cancelar' : 'Selecionar'),
+              ),
+            ],
+          ),
+          if (dupCount > 0 && !_selectionMode) ...[
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                const Icon(
+                  Icons.content_copy_rounded,
+                  size: 14,
+                  color: AppColors.warning,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    '$dupCount órgãos com nome repetido. Use "Selecionar" para '
+                    'excluir os duplicados.',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// Barra fixa embaixo no modo seleção, com a ação de excluir os marcados.
+  Widget _selectionBottomBar(List<Institution> institutions) {
+    final count = _selectedIds.length;
+    return Material(
+      elevation: 8,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: [
+              Text(
+                '$count selecionado${count == 1 ? '' : 's'}',
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const Spacer(),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.error,
+                ),
+                onPressed: count == 0
+                    ? null
+                    : () {
+                        final toDelete = institutions
+                            .where((i) => _selectedIds.contains(i.id))
+                            .toList();
+                        _confirmDeleteInstitutions(toDelete);
+                      },
+                icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                label: Text('Excluir ($count)'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _duplicateBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: const Text(
+        'possível duplicado',
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: AppColors.warning,
+        ),
+      ),
+    );
+  }
+
+  void _toggleSelection(String id) {
+    setState(() {
+      if (_selectedIds.contains(id)) {
+        _selectedIds.remove(id);
+      } else {
+        _selectedIds.add(id);
+      }
+    });
+  }
+
+  Future<void> _createInstitution() async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => const InstitutionEditScreen()),
+    );
+    if (saved == true && mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Órgão cadastrado.')));
+    }
   }
 
   Future<void> _editInstitution(Institution inst) async {
@@ -613,9 +949,69 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
       ),
     );
     if (saved == true && mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${inst.name} foi atualizado.')));
+    }
+  }
+
+  Future<void> _confirmDeleteInstitutions(List<Institution> targets) async {
+    if (targets.isEmpty) return;
+    final many = targets.length > 1;
+    final title = many
+        ? 'Excluir ${targets.length} órgãos?'
+        : 'Excluir "${targets.first.name}"?';
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: const Text(
+          'Essa ação é definitiva e remove o(s) órgão(s) do banco de dados. '
+          'Para apenas escondê-lo do cidadão, edite e desative em vez de excluir.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      final repo = ref.read(institutionRepoProvider);
+      if (many) {
+        await repo.deleteMany(targets.map((i) => i.id).toList());
+      } else {
+        await repo.deleteOne(targets.first.id);
+      }
+      ref.invalidate(adminInstitutionsProvider);
+      ref.invalidate(allInstitutionsProvider);
+      if (!mounted) return;
+      setState(() {
+        _selectedIds.clear();
+        _selectionMode = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${inst.name} foi atualizado.')),
+        SnackBar(
+          content: Text(
+            many
+                ? '${targets.length} órgãos excluídos.'
+                : '"${targets.first.name}" excluído.',
+          ),
+        ),
       );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Não foi possível excluir: $e')));
     }
   }
 
@@ -629,17 +1025,25 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.1),
-                  shape: BoxShape.circle),
-              child: const Icon(Icons.verified_rounded,
-                  color: AppColors.success, size: 48),
+                color: AppColors.success.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.verified_rounded,
+                color: AppColors.success,
+                size: 48,
+              ),
             ),
             const SizedBox(height: 16),
-            const Text('Nenhuma denúncia registrada',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+            const Text(
+              'Nenhuma denúncia registrada',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+            ),
             const SizedBox(height: 4),
-            const Text('Tudo certo por aqui!',
-                style: TextStyle(color: AppColors.textSecondary)),
+            const Text(
+              'Tudo certo por aqui!',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
           ],
         ),
       );
@@ -687,46 +1091,68 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
                 Text(r.type.icon, style: const TextStyle(fontSize: 18)),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(r.type.label,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w800, fontSize: 14)),
+                  child: Text(
+                    r.type.label,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.warning.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(r.status.name,
-                      style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.warning)),
+                  child: Text(
+                    r.status.name,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.warning,
+                    ),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Text(r.institutionName,
-                style: const TextStyle(
-                    color: AppColors.primary, fontWeight: FontWeight.w700)),
+            Text(
+              r.institutionName,
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             const SizedBox(height: 6),
             Text(r.description, maxLines: 3, overflow: TextOverflow.ellipsis),
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(r.anonymous ? Icons.visibility_off : Icons.person,
-                    size: 14, color: AppColors.textSecondary),
+                Icon(
+                  r.anonymous ? Icons.visibility_off : Icons.person,
+                  size: 14,
+                  color: AppColors.textSecondary,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   r.anonymous ? 'Anônimo' : (r.contactName ?? 'Identificado'),
                   style: const TextStyle(
-                      fontSize: 12, color: AppColors.textSecondary),
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const Spacer(),
-                Text(_formatDate(r.createdAt),
-                    style: const TextStyle(
-                        fontSize: 12, color: AppColors.textSecondary)),
+                Text(
+                  _formatDate(r.createdAt),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ],
             ),
           ],
@@ -761,14 +1187,13 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
         });
         return;
       }
-      final imported =
-          ExcelImportService().parseExcel(result.files.single.bytes!);
+      final imported = ExcelImportService().parseExcel(
+        result.files.single.bytes!,
+      );
 
       // Detectar duplicatas pelo nome (normalizado)
       final existing = await ref.read(adminInstitutionsProvider.future);
-      final existingNames = existing
-          .map((i) => _normalize(i.name))
-          .toSet();
+      final existingNames = existing.map((i) => _normalize(i.name)).toSet();
       final dups = <Institution>[];
       final news = <Institution>[];
       for (final inst in imported) {
@@ -799,9 +1224,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
     try {
       final repo = ref.read(institutionRepoProvider);
       final existing = await ref.read(adminInstitutionsProvider.future);
-      final idByNormName = {
-        for (final e in existing) _normalize(e.name): e.id,
-      };
+      final idByNormName = {for (final e in existing) _normalize(e.name): e.id};
 
       int inserted = 0;
       int updated = 0;
@@ -837,9 +1260,14 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          icon: const Icon(Icons.check_circle_rounded,
-              color: AppColors.success, size: 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          icon: const Icon(
+            Icons.check_circle_rounded,
+            color: AppColors.success,
+            size: 48,
+          ),
           title: const Text('Importação concluída'),
           content: Text(
             'Inseridos: $inserted\n'
@@ -862,9 +1290,14 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          icon: const Icon(Icons.error_rounded,
-              color: AppColors.error, size: 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          icon: const Icon(
+            Icons.error_rounded,
+            color: AppColors.error,
+            size: 48,
+          ),
           title: const Text('Falha na importação'),
           content: Text('$e'),
           actions: [

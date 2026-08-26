@@ -14,107 +14,118 @@ class SafetyCheckScreen extends ConsumerWidget {
     return Scaffold(
       appBar: const GeoAppBar(title: 'Antes de tudo'),
       body: SafeArea(
-        child: LayoutBuilder(builder: (context, c) {
-          final isWide = c.maxWidth > 600;
-          return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: isWide ? c.maxWidth * 0.2 : 20,
-              vertical: 24,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppColors.error, AppColors.error.withValues(alpha: 0.8)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.shield_rounded,
-                            color: Colors.white, size: 30),
+        child: LayoutBuilder(
+          builder: (context, c) {
+            final isWide = c.maxWidth > 600;
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: isWide ? c.maxWidth * 0.2 : 20,
+                vertical: 24,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.error,
+                          AppColors.error.withValues(alpha: 0.8),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      const SizedBox(width: 14),
-                      const Expanded(
-                        child: Text(
-                          'Você está em segurança agora?',
-                          style: TextStyle(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.shield_rounded,
                             color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
-                            height: 1.3,
+                            size: 30,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 22),
-                _option(
-                  context,
-                  '🚨 Não, preciso de socorro',
-                  'Vou te conectar com a polícia AGORA',
-                  AppColors.error,
-                  Icons.emergency_rounded,
-                  () => _emergency(context),
-                  big: true,
-                ),
-                const SizedBox(height: 12),
-                _option(
-                  context,
-                  'Sim, quero orientação',
-                  'Vamos te ajudar a procurar apoio',
-                  AppColors.success,
-                  Icons.check_circle_rounded,
-                  () {
-                    context.go(AppRoutes.results);
-                  },
-                ),
-                const SizedBox(height: 12),
-                _option(
-                  context,
-                  'Só quero ligar 180',
-                  'Central de Atendimento à Mulher',
-                  AppColors.categoryMulher,
-                  Icons.phone_in_talk_rounded,
-                  () => _launch('tel:180'),
-                ),
-                const SizedBox(height: 28),
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.info_outline_rounded,
-                          color: AppColors.secondary, size: 20),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'O atendimento é gratuito e sigiloso. Você não precisa de advogado para pedir medida protetiva.',
-                          style: TextStyle(fontSize: 13, height: 1.4),
+                        const SizedBox(width: 14),
+                        const Expanded(
+                          child: Text(
+                            'Você está em segurança agora?',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
+                              height: 1.3,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
+                  const SizedBox(height: 22),
+                  _option(
+                    context,
+                    '🚨 Não, preciso de socorro',
+                    'Vou te conectar com a polícia AGORA',
+                    AppColors.error,
+                    Icons.emergency_rounded,
+                    () => _emergency(context),
+                    big: true,
+                  ),
+                  const SizedBox(height: 12),
+                  _option(
+                    context,
+                    'Sim, quero orientação',
+                    'Vamos te ajudar a procurar apoio',
+                    AppColors.success,
+                    Icons.check_circle_rounded,
+                    () {
+                      context.push(AppRoutes.results);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _option(
+                    context,
+                    'Só quero ligar 180',
+                    'Central de Atendimento à Mulher',
+                    AppColors.categoryMulher,
+                    Icons.phone_in_talk_rounded,
+                    () => _launch('tel:180'),
+                  ),
+                  const SizedBox(height: 28),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondary.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: AppColors.secondary,
+                          size: 20,
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'O atendimento é gratuito e sigiloso. Você não precisa de advogado para pedir medida protetiva.',
+                            style: TextStyle(fontSize: 13, height: 1.4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -160,8 +171,9 @@ class SafetyCheckScreen extends ConsumerWidget {
               Container(
                 padding: EdgeInsets.all(big ? 14 : 11),
                 decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.15),
-                    shape: BoxShape.circle),
+                  color: color.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
                 child: Icon(icon, color: color, size: big ? 30 : 24),
               ),
               const SizedBox(width: 14),
@@ -169,21 +181,26 @@ class SafetyCheckScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: big ? 17 : 15,
-                          color: AppColors.onBackground,
-                        )),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: big ? 17 : 15,
+                        color: AppColors.onBackground,
+                      ),
+                    ),
                     const SizedBox(height: 2),
-                    Text(subtitle,
-                        style: const TextStyle(
-                            color: AppColors.textSecondary, fontSize: 13)),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios_rounded,
-                  color: color, size: 16),
+              Icon(Icons.arrow_forward_ios_rounded, color: color, size: 16),
             ],
           ),
         ),
@@ -211,9 +228,10 @@ class SafetyCheckScreen extends ConsumerWidget {
               'Ligue agora para',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700),
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: 18),
             _emergencyButton(context, '190', 'Polícia Militar'),
@@ -222,7 +240,10 @@ class SafetyCheckScreen extends ConsumerWidget {
             const SizedBox(height: 14),
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Fechar', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Fechar',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),
@@ -236,8 +257,10 @@ class SafetyCheckScreen extends ConsumerWidget {
       child: ElevatedButton.icon(
         onPressed: () => _launch('tel:$number'),
         icon: const Icon(Icons.phone_in_talk_rounded, size: 28),
-        label: Text('$number — $label',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+        label: Text(
+          '$number — $label',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           foregroundColor: AppColors.error,

@@ -1,8 +1,11 @@
 // GeoJustiça - Service Worker
 // Estratégia: stale-while-revalidate para HTML, cache-first para assets
 
-const CACHE_VERSION = 'geojustica-v2';
-const RUNTIME_CACHE = 'geojustica-runtime';
+// A versão entra no nome de AMBOS os caches para que o `activate` purgue tudo
+// que é antigo — inclusive o runtime, que antes ficava preso servindo o
+// main.dart.js de um build velho (era a causa da tela de "código" resurgir).
+const CACHE_VERSION = 'geojustica-v3';
+const RUNTIME_CACHE = 'geojustica-runtime-v3';
 
 const PRECACHE_URLS = [
   '/',
@@ -62,8 +65,27 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Para arquivos JS/CSS/imagens: cache-first
-  if (/\.(js|css|woff2?|ttf|otf|svg|png|jpg|jpeg|gif|ico)$/i.test(url.pathname)) {
+  // Bundles do app (JS): network-first. O código do Flutter muda a cada deploy,
+  // então nunca pode ser servido de um cache velho — senão o usuário fica preso
+  // numa versão antiga do app. Cache só como fallback offline.
+  if (/\.js$/i.test(url.pathname)) {
+    event.respondWith(
+      fetch(req)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(RUNTIME_CACHE).then((cache) => cache.put(req, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // Assets estáticos (CSS, fontes, imagens): cache-first (não mudam entre builds
+  // sem trocar de nome).
+  if (/\.(css|woff2?|ttf|otf|svg|png|jpg|jpeg|gif|ico)$/i.test(url.pathname)) {
     event.respondWith(
       caches.match(req).then((cached) => {
         if (cached) return cached;

@@ -40,8 +40,11 @@ class SupabaseInstitutionRepository {
   }) async {
     final client = _client;
     if (client == null) {
-      return _local.getByCategory(category,
-          onlyFree: onlyFree, userLocation: userLocation);
+      return _local.getByCategory(
+        category,
+        onlyFree: onlyFree,
+        userLocation: userLocation,
+      );
     }
     try {
       var query = client
@@ -58,13 +61,17 @@ class SupabaseInstitutionRepository {
         for (final inst in institutions) {
           inst.distanceKm = loc.calculateDistanceKm(userLocation, inst.latLng);
         }
-        institutions
-            .sort((a, b) => (a.distanceKm ?? 999).compareTo(b.distanceKm ?? 999));
+        institutions.sort(
+          (a, b) => (a.distanceKm ?? 999).compareTo(b.distanceKm ?? 999),
+        );
       }
       return institutions;
     } catch (_) {
-      return _local.getByCategory(category,
-          onlyFree: onlyFree, userLocation: userLocation);
+      return _local.getByCategory(
+        category,
+        onlyFree: onlyFree,
+        userLocation: userLocation,
+      );
     }
   }
 
@@ -84,8 +91,11 @@ class SupabaseInstitutionRepository {
     final client = _client;
     if (client == null) return _local.getById(id);
     try {
-      final response =
-          await client.from('institutions').select().eq('id', id).maybeSingle();
+      final response = await client
+          .from('institutions')
+          .select()
+          .eq('id', id)
+          .maybeSingle();
       if (response == null) return _local.getById(id);
       return _fromRow(response);
     } catch (_) {
@@ -107,6 +117,21 @@ class SupabaseInstitutionRepository {
     return rows.length;
   }
 
+  /// Insere um único órgão e devolve o registro criado (com o uuid gerado pelo
+  /// Postgres). Usado ao cadastrar um órgão manualmente pelo painel.
+  Future<Institution> insertOne(Institution data) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase indisponível — cadastro requer conexão.');
+    }
+    final row = await client
+        .from('institutions')
+        .insert(_toInsertRow(data))
+        .select()
+        .single();
+    return _fromRow(row);
+  }
+
   /// Atualiza um registro existente (pelo uuid real do Supabase).
   Future<void> updateOne(String id, Institution data) async {
     final client = _client;
@@ -116,22 +141,41 @@ class SupabaseInstitutionRepository {
     await client.from('institutions').update(_toInsertRow(data)).eq('id', id);
   }
 
+  /// Exclui um órgão definitivamente (usado para remover duplicados no painel).
+  Future<void> deleteOne(String id) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase indisponível — exclusão requer conexão.');
+    }
+    await client.from('institutions').delete().eq('id', id);
+  }
+
+  /// Exclui vários órgãos de uma vez (remoção de duplicados em lote).
+  Future<void> deleteMany(List<String> ids) async {
+    if (ids.isEmpty) return;
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase indisponível — exclusão requer conexão.');
+    }
+    await client.from('institutions').delete().inFilter('id', ids);
+  }
+
   Map<String, dynamic> _toInsertRow(Institution i) => {
-        'name': i.name,
-        'address': i.address,
-        'neighborhood': i.neighborhood,
-        'phone': i.phone,
-        'whatsapp': i.whatsapp,
-        'category': i.category.name,
-        'services': i.services.join(';'),
-        'schedule': i.schedule,
-        'observations': i.observations,
-        'sphere': i.sphere.name,
-        'latitude': i.latitude,
-        'longitude': i.longitude,
-        'accepts_indigent': i.acceptsIndigent,
-        'is_active': i.isActive,
-      };
+    'name': i.name,
+    'address': i.address,
+    'neighborhood': i.neighborhood,
+    'phone': i.phone,
+    'whatsapp': i.whatsapp,
+    'category': i.category.name,
+    'services': i.services.join(';'),
+    'schedule': i.schedule,
+    'observations': i.observations,
+    'sphere': i.sphere.name,
+    'latitude': i.latitude,
+    'longitude': i.longitude,
+    'accepts_indigent': i.acceptsIndigent,
+    'is_active': i.isActive,
+  };
 
   Institution _fromRow(Map<String, dynamic> row) {
     final servicesStr = (row['services'] ?? '').toString();

@@ -6,12 +6,13 @@ import '../../../models/institution.dart';
 import '../../../providers/institution_provider.dart';
 import '../../../shared/widgets/geo_app_bar.dart';
 
-/// Edição completa de um órgão — inclusive a categoria, que define em qual
-/// fluxo ele aparece para o cidadão.
+/// Edição/cadastro completo de um órgão — inclusive a categoria, que define em
+/// qual fluxo ele aparece para o cidadão. Quando [institution] é null, a tela
+/// funciona em modo "novo órgão".
 class InstitutionEditScreen extends ConsumerStatefulWidget {
-  final Institution institution;
+  final Institution? institution;
 
-  const InstitutionEditScreen({super.key, required this.institution});
+  const InstitutionEditScreen({super.key, this.institution});
 
   @override
   ConsumerState<InstitutionEditScreen> createState() =>
@@ -40,24 +41,32 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
   bool _saving = false;
   String? _error;
 
+  /// true quando estamos cadastrando um órgão novo (sem instituição de origem).
+  bool get _isNew => widget.institution == null;
+
   @override
   void initState() {
     super.initState();
     final i = widget.institution;
-    _name = TextEditingController(text: i.name);
-    _address = TextEditingController(text: i.address);
-    _neighborhood = TextEditingController(text: i.neighborhood);
-    _phone = TextEditingController(text: i.phone ?? '');
-    _whatsapp = TextEditingController(text: i.whatsapp ?? '');
-    _services = TextEditingController(text: i.services.join('; '));
-    _schedule = TextEditingController(text: i.schedule ?? '');
-    _observations = TextEditingController(text: i.observations ?? '');
-    _latitude = TextEditingController(text: i.latitude.toString());
-    _longitude = TextEditingController(text: i.longitude.toString());
-    _category = i.category;
-    _sphere = i.sphere;
-    _acceptsIndigent = i.acceptsIndigent;
-    _isActive = i.isActive;
+    _name = TextEditingController(text: i?.name ?? '');
+    _address = TextEditingController(text: i?.address ?? '');
+    _neighborhood = TextEditingController(text: i?.neighborhood ?? '');
+    _phone = TextEditingController(text: i?.phone ?? '');
+    _whatsapp = TextEditingController(text: i?.whatsapp ?? '');
+    _services = TextEditingController(text: i?.services.join('; ') ?? '');
+    _schedule = TextEditingController(text: i?.schedule ?? '');
+    _observations = TextEditingController(text: i?.observations ?? '');
+    // Em órgão novo os campos de coordenada começam vazios (são obrigatórios).
+    _latitude = TextEditingController(
+      text: i != null ? i.latitude.toString() : '',
+    );
+    _longitude = TextEditingController(
+      text: i != null ? i.longitude.toString() : '',
+    );
+    _category = i?.category ?? InstitutionCategory.outros;
+    _sphere = i?.sphere ?? AdminSphere.municipal;
+    _acceptsIndigent = i?.acceptsIndigent ?? true;
+    _isActive = i?.isActive ?? true;
   }
 
   @override
@@ -92,8 +101,8 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
       _error = null;
     });
 
-    final updated = Institution(
-      id: widget.institution.id,
+    final edited = Institution(
+      id: widget.institution?.id ?? '',
       name: _name.text.trim(),
       address: _address.text.trim(),
       neighborhood: _neighborhood.text.trim(),
@@ -115,13 +124,18 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
     );
 
     try {
-      await ref
-          .read(institutionRepoProvider)
-          .updateOne(widget.institution.id, updated);
+      final repo = ref.read(institutionRepoProvider);
+      if (_isNew) {
+        await repo.insertOne(edited);
+      } else {
+        await repo.updateOne(widget.institution!.id, edited);
+      }
 
       ref.invalidate(adminInstitutionsProvider);
       ref.invalidate(allInstitutionsProvider);
-      ref.invalidate(institutionDetailProvider(widget.institution.id));
+      if (!_isNew) {
+        ref.invalidate(institutionDetailProvider(widget.institution!.id));
+      }
 
       if (!mounted) return;
       Navigator.of(context).pop(true);
@@ -137,7 +151,7 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const GeoAppBar(title: 'Editar órgão'),
+      appBar: GeoAppBar(title: _isNew ? 'Novo órgão' : 'Editar órgão'),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -214,8 +228,10 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
                       controller: _latitude,
                       label: 'Latitude *',
                       icon: Icons.north_rounded,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(signed: true, decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        signed: true,
+                        decimal: true,
+                      ),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.,\-]')),
                       ],
@@ -228,8 +244,10 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
                       controller: _longitude,
                       label: 'Longitude *',
                       icon: Icons.east_rounded,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(signed: true, decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        signed: true,
+                        decimal: true,
+                      ),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.,\-]')),
                       ],
@@ -246,7 +264,8 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
                 onChanged: (v) => setState(() => _acceptsIndigent = v),
                 title: const Text('Atende gratuitamente'),
                 subtitle: const Text(
-                    'Aparece para quem respondeu que não pode pagar advogado.'),
+                  'Aparece para quem respondeu que não pode pagar advogado.',
+                ),
                 contentPadding: EdgeInsets.zero,
               ),
               SwitchListTile(
@@ -254,7 +273,8 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
                 onChanged: (v) => setState(() => _isActive = v),
                 title: const Text('Ativo'),
                 subtitle: const Text(
-                    'Desativado, o órgão some das buscas e do mapa do cidadão.'),
+                  'Desativado, o órgão some das buscas e do mapa do cidadão.',
+                ),
                 contentPadding: EdgeInsets.zero,
               ),
 
@@ -269,7 +289,9 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
                   child: Text(
                     _error!,
                     style: const TextStyle(
-                        color: AppColors.error, fontWeight: FontWeight.w600),
+                      color: AppColors.error,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -282,14 +304,22 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white))
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
                     : const Icon(Icons.save_rounded),
-                label: Text(_saving ? 'Salvando...' : 'Salvar alterações'),
+                label: Text(
+                  _saving
+                      ? 'Salvando...'
+                      : (_isNew ? 'Cadastrar órgão' : 'Salvar alterações'),
+                ),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
-                onPressed:
-                    _saving ? null : () => Navigator.of(context).pop(false),
+                onPressed: _saving
+                    ? null
+                    : () => Navigator.of(context).pop(false),
                 child: const Text('Cancelar'),
               ),
             ],
@@ -317,11 +347,14 @@ class _InstitutionEditScreenState extends ConsumerState<InstitutionEditScreen> {
         children: [
           Icon(icon, size: 18, color: AppColors.primary),
           const SizedBox(width: 8),
-          Text(text,
-              style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 15,
-                  color: AppColors.primary)),
+          Text(
+            text,
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 15,
+              color: AppColors.primary,
+            ),
+          ),
         ],
       ),
     );

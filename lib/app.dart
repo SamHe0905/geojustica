@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'core/constants/app_colors.dart';
 import 'core/constants/app_routes.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/settings_provider.dart';
@@ -31,36 +32,72 @@ class GeoJusticaApp extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
 
     final router = GoRouter(
-      initialLocation:
-          settings.onboardingSeen ? AppRoutes.home : AppRoutes.onboarding,
+      initialLocation: settings.onboardingSeen
+          ? AppRoutes.home
+          : AppRoutes.onboarding,
       routes: [
-        GoRoute(path: AppRoutes.onboarding, builder: (_, __) => const OnboardingScreen()),
+        GoRoute(
+          path: AppRoutes.onboarding,
+          builder: (_, __) => const OnboardingScreen(),
+        ),
         GoRoute(path: AppRoutes.home, builder: (_, __) => const HomeScreen()),
-        GoRoute(path: AppRoutes.search, builder: (_, __) => const SearchScreen()),
-        GoRoute(path: AppRoutes.flow, builder: (_, __) => const FlowGuard(child: FlowScreen())),
-        GoRoute(path: AppRoutes.subcategory, builder: (_, __) => const FlowGuard(child: SubcategoryScreen())),
-        GoRoute(path: AppRoutes.safetyCheck, builder: (_, __) => const FlowGuard(child: SafetyCheckScreen())),
-        GoRoute(path: AppRoutes.results, builder: (_, __) => const FlowGuard(child: ResultsScreen())),
+        GoRoute(
+          path: AppRoutes.search,
+          builder: (_, __) => const SearchScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.flow,
+          builder: (_, __) => const FlowGuard(child: FlowScreen()),
+        ),
+        GoRoute(
+          path: AppRoutes.subcategory,
+          builder: (_, __) => const FlowGuard(child: SubcategoryScreen()),
+        ),
+        GoRoute(
+          path: AppRoutes.safetyCheck,
+          builder: (_, __) => const FlowGuard(child: SafetyCheckScreen()),
+        ),
+        GoRoute(
+          path: AppRoutes.results,
+          builder: (_, __) => const FlowGuard(child: ResultsScreen()),
+        ),
         GoRoute(
           path: AppRoutes.institutionDetail,
           builder: (_, state) =>
               InstitutionDetailScreen(id: state.pathParameters['id']!),
         ),
-        GoRoute(path: AppRoutes.map, builder: (_, __) => const FlowGuard(child: MapScreen())),
+        GoRoute(
+          path: AppRoutes.map,
+          builder: (_, __) => const FlowGuard(child: MapScreen()),
+        ),
         GoRoute(
           path: AppRoutes.mapAll,
           builder: (_, __) => const MapScreen(showAll: true),
         ),
         GoRoute(path: AppRoutes.admin, builder: (_, __) => const AdminGuard()),
-        GoRoute(path: AppRoutes.adminLogin, builder: (_, __) => const AdminGuard()),
-        GoRoute(path: AppRoutes.adminDiscovery, builder: (_, __) => const DiscoveryScreen()),
+        GoRoute(
+          path: AppRoutes.adminLogin,
+          builder: (_, __) => const AdminGuard(),
+        ),
+        GoRoute(
+          path: AppRoutes.adminDiscovery,
+          // Protegida: só carrega a descoberta para quem está logado.
+          builder: (_, __) =>
+              const AdminGuard(authenticatedChild: DiscoveryScreen()),
+        ),
         GoRoute(
           path: AppRoutes.report,
           builder: (_, state) =>
               ReportScreen(institutionId: state.pathParameters['id']!),
         ),
-        GoRoute(path: AppRoutes.history, builder: (_, __) => const HistoryScreen()),
-        GoRoute(path: AppRoutes.lawyers, builder: (_, __) => const LawyersScreen()),
+        GoRoute(
+          path: AppRoutes.history,
+          builder: (_, __) => const HistoryScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.lawyers,
+          builder: (_, __) => const LawyersScreen(),
+        ),
         GoRoute(
           path: AppRoutes.lawyerSignup,
           builder: (_, __) => const LawyerSignupScreen(),
@@ -71,6 +108,45 @@ class GeoJusticaApp extends ConsumerWidget {
               LawyerDetailScreen(id: state.pathParameters['id']!),
         ),
       ],
+      // Fallback para qualquer rota inválida/estado quebrado — evita cair no
+      // fundo verde vazio (Navigator sem página).
+      errorBuilder: (context, state) => Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.explore_off_rounded,
+                    size: 56,
+                    color: AppColors.textMuted,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Página não encontrada',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'O caminho que você tentou abrir não existe mais.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () => context.go(AppRoutes.home),
+                    icon: const Icon(Icons.home_rounded),
+                    label: const Text('Voltar ao início'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
 
     final baseTheme = AppTheme.light;
@@ -93,9 +169,9 @@ class GeoJusticaApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(settings.fontScale),
-          ),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(settings.fontScale)),
           child: InstallAppPopup(child: child!),
         );
       },

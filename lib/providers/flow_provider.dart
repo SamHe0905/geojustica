@@ -3,8 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/flow_state.dart';
 import '../models/institution.dart';
 
-final flowProvider =
-    StateNotifierProvider<FlowNotifier, FlowState>((ref) => FlowNotifier());
+final flowProvider = StateNotifierProvider<FlowNotifier, FlowState>(
+  (ref) => FlowNotifier(),
+);
 
 class FlowNotifier extends StateNotifier<FlowState> {
   static const _key = 'flow_state';
@@ -23,6 +24,7 @@ class FlowNotifier extends StateNotifier<FlowState> {
       orElse: () => InstitutionCategory.outros,
     );
     final payment = prefs.getString('${_key}_payment');
+    final intent = prefs.getString('${_key}_intent');
     final lat = prefs.getDouble('${_key}_lat');
     final lng = prefs.getDouble('${_key}_lng');
     final neighborhood = prefs.getString('${_key}_neighborhood');
@@ -31,6 +33,12 @@ class FlowNotifier extends StateNotifier<FlowState> {
     state = FlowState(
       category: cat,
       subcategoryId: subId,
+      intent: intent != null
+          ? FlowIntent.values.firstWhere(
+              (i) => i.name == intent,
+              orElse: () => FlowIntent.resolve,
+            )
+          : null,
       paymentAbility: payment != null
           ? PaymentAbility.values.firstWhere(
               (p) => p.name == payment,
@@ -54,6 +62,11 @@ class FlowNotifier extends StateNotifier<FlowState> {
       await prefs.setString('${_key}_sub', state.subcategoryId!);
     } else {
       await prefs.remove('${_key}_sub');
+    }
+    if (state.intent != null) {
+      await prefs.setString('${_key}_intent', state.intent!.name);
+    } else {
+      await prefs.remove('${_key}_intent');
     }
     if (state.paymentAbility != null) {
       await prefs.setString('${_key}_payment', state.paymentAbility!.name);
@@ -84,6 +97,25 @@ class FlowNotifier extends StateNotifier<FlowState> {
 
   void setSubcategory(String subcategoryId) {
     state = state.copyWith(subcategoryId: subcategoryId);
+    _persist();
+  }
+
+  void setIntent(FlowIntent intent) {
+    // "Só quero informação" nunca filtra por gratuidade: zera a resposta de
+    // pagamento pra não sobrar um filtro de uma passagem anterior pelo fluxo.
+    if (intent == FlowIntent.info) {
+      state = FlowState(
+        category: state.category,
+        subcategoryId: state.subcategoryId,
+        intent: FlowIntent.info,
+        paymentAbility: null,
+        userLatitude: state.userLatitude,
+        userLongitude: state.userLongitude,
+        neighborhoodInput: state.neighborhoodInput,
+      );
+    } else {
+      state = state.copyWith(intent: intent);
+    }
     _persist();
   }
 

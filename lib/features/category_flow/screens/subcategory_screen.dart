@@ -20,37 +20,43 @@ class SubcategoryScreen extends ConsumerWidget {
     // Se não tem sub-categorias, vai direto pro fluxo
     if (subs.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback(
-          (_) => context.go(AppRoutes.flow));
+        (_) => context.pushReplacement(AppRoutes.flow),
+      );
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
       appBar: GeoAppBar(title: category.label),
       body: SafeArea(
-        child: LayoutBuilder(builder: (context, c) {
-          final isWide = c.maxWidth > 600;
-          return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: isWide ? c.maxWidth * 0.18 : 20,
-              vertical: 22,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  _questionFor(category),
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        height: 1.25,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Toque na opção que mais se parece com o seu caso.',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-                ),
-                const SizedBox(height: 18),
-                ...subs.map((s) => Padding(
+        child: LayoutBuilder(
+          builder: (context, c) {
+            final isWide = c.maxWidth > 600;
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: isWide ? c.maxWidth * 0.18 : 20,
+                vertical: 22,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    _questionFor(category),
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      height: 1.25,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Toque na opção que mais se parece com o seu caso.',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  ...subs.map(
+                    (s) => Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: _SubOption(
                         sub: s,
@@ -59,49 +65,64 @@ class SubcategoryScreen extends ConsumerWidget {
                           context.push(AppRoutes.flow);
                         },
                       ),
-                    )),
-                const SizedBox(height: 10),
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.lightbulb_outline_rounded,
-                          color: AppColors.secondary, size: 20),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Em dúvida? Escolha "Outro". Vamos te orientar mesmo assim.',
-                          style: TextStyle(fontSize: 13, height: 1.4),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondary.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.lightbulb_outline_rounded,
+                          color: AppColors.secondary,
+                          size: 20,
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Em dúvida? Escolha "Outro". Vamos te orientar mesmo assim.',
+                            style: TextStyle(fontSize: 13, height: 1.4),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
   String _questionFor(InstitutionCategory cat) {
     switch (cat) {
-      case InstitutionCategory.familia: return 'Sobre o que você precisa?';
-      case InstitutionCategory.trabalho: return 'O que aconteceu no seu trabalho?';
-      case InstitutionCategory.aposentadoria: return 'Que tipo de benefício?';
-      case InstitutionCategory.consumidor: return 'Qual o problema?';
-      case InstitutionCategory.moradia: return 'Qual sua situação?';
-      case InstitutionCategory.documentos: return 'Qual documento?';
-      case InstitutionCategory.direitosMulher: return 'Qual sua situação?';
-      case InstitutionCategory.saude: return 'Do que você precisa?';
-      case InstitutionCategory.denuncias: return 'O que você quer denunciar?';
+      case InstitutionCategory.familia:
+        return 'Sobre o que você precisa?';
+      case InstitutionCategory.trabalho:
+        return 'O que aconteceu no seu trabalho?';
+      case InstitutionCategory.aposentadoria:
+        return 'Que tipo de benefício?';
+      case InstitutionCategory.consumidor:
+        return 'Qual o problema?';
+      case InstitutionCategory.moradia:
+        return 'Qual sua situação?';
+      case InstitutionCategory.documentos:
+        return 'Qual documento?';
+      case InstitutionCategory.direitosMulher:
+        return 'Qual sua situação?';
+      case InstitutionCategory.saude:
+        return 'Do que você precisa?';
+      case InstitutionCategory.denuncias:
+        return 'O que você quer denunciar?';
       case InstitutionCategory.violenciaDomestica:
-      case InstitutionCategory.outros: return 'Vamos te orientar';
+      case InstitutionCategory.outros:
+        return 'Vamos te orientar';
     }
   }
 }
@@ -152,8 +173,11 @@ class _SubOption extends StatelessWidget {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(Icons.lightbulb_rounded,
-                              size: 12, color: AppColors.warning),
+                          const Icon(
+                            Icons.lightbulb_rounded,
+                            size: 12,
+                            color: AppColors.warning,
+                          ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
@@ -173,8 +197,11 @@ class _SubOption extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios_rounded,
-                  color: AppColors.primary, size: 14),
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: AppColors.primary,
+                size: 14,
+              ),
             ],
           ),
         ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_routes.dart';
 import '../../core/constants/app_strings.dart';
 
 class GeoAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -38,15 +40,21 @@ class GeoAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: showBack
           ? IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-              onPressed: () => Navigator.of(context).pop(),
+              // Voltar seguro: se não há pra onde voltar, vai pra home em vez
+              // de esvaziar o Navigator (o que mostrava só o fundo verde).
+              onPressed: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go(AppRoutes.home);
+                }
+              },
             )
           : null,
       automaticallyImplyLeading: false,
       actions: actions,
       flexibleSpace: Container(
-        decoration: const BoxDecoration(
-          gradient: AppColors.primaryGradient,
-        ),
+        decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
         child: Stack(
           children: [
             Positioned(
@@ -70,4 +78,3 @@ class GeoAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
-
